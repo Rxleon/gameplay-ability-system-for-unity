@@ -89,7 +89,6 @@ namespace GAS.RuntimeWithECS.AttributeSet
             
             var data = attrSet.Attributes[attrIndex];
             data.BaseValue = value;
-            data.TriggerCueEvent = triggerEvent;
             // TODO: 重新计算current value
             // 注意：这里只是添加了TagAttributeDirty，设置了Attribute的dirty为true，真正的重计算完成是在RecalculateCurrentValueSystem中。
             // 【RecalculateCurrentValueSystem会有重计算完成的广播，广播会告知哪些实例的哪些属性重计算的新值。ECS本质是一帧内立即响应，而不是延迟一帧执行。】

@@ -51,7 +51,7 @@ namespace GAS.RuntimeWithECS.System.Attribute
                 // OnChangeAfter
                 if (newValue != oldValue)
                 {
-                    attr.TriggerCueEvent = true;
+                    // BaseValue 改变，需要标记Dirty
                     attr.Dirty = true;
                     GASManager.EntityManager.AddComponent<ComAttributeDirty>(asc);
                     GASEventCenter.InvokeOnBaseValueChangeAfter(updateInfo.ASC,updateInfo.AttrSetCode,updateInfo.AttrCode,oldValue,newValue);
