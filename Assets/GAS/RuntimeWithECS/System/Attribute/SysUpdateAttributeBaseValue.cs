@@ -53,7 +53,7 @@ namespace GAS.RuntimeWithECS.System.Attribute
                 {
                     // BaseValue 改变，需要标记Dirty
                     attr.Dirty = true;
-                    GASManager.EntityManager.AddComponent<ComAttributeDirty>(asc);
+                    GASManager.EntityManager.AddComponent<AttributeIsDirty>(asc);
                     GASEventCenter.InvokeOnBaseValueChangeAfter(updateInfo.ASC,updateInfo.AttrSetCode,updateInfo.AttrCode,oldValue,newValue);
                 }
                 

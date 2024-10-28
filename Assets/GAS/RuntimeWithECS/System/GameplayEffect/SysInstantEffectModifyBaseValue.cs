@@ -89,6 +89,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             }
 
             ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
 
         [BurstCompile]

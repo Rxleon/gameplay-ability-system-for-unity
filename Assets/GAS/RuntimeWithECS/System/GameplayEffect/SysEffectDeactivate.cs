@@ -1,4 +1,7 @@
-﻿using GAS.RuntimeWithECS.Core;
+﻿using GAS.RuntimeWithECS.Attribute.Component;
+using GAS.RuntimeWithECS.AttributeSet.Component;
+using GAS.RuntimeWithECS.Core;
+using GAS.RuntimeWithECS.GameplayEffect;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
 using Unity.Burst;
 using Unity.Collections;
@@ -49,10 +52,19 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                 // 4.关闭Granted Ability
                 // TryDeactivateGrantedAbilities();
                 
+                // 5. 标记所有受影响的Attribute为dirty
+                var inUsage = SystemAPI.GetComponentRO<ComInUsage>(ge);
+                var asc = inUsage.ValueRO.Target;
+                var isDirty = GameplayEffectUtils.CheckAscAttributeDirty(
+                    SystemAPI.GetBuffer<AttributeSetBufferElement>(asc),
+                    SystemAPI.GetBuffer<BuffEleModifier>(ge));
+                if (isDirty) ecb.AddComponent<AttributeIsDirty>(asc);
+                
                 // 完成任务后删除执行标签
                 ecb.RemoveComponent<ComNeedDeactivate>(ge);
             }
             ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
 
         [BurstCompile]
