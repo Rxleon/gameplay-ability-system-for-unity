@@ -40,5 +40,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             }
             return isDirty;
         }
+        
+
     }
 }
