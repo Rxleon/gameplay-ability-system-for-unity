@@ -1,10 +1,15 @@
 using GAS.Runtime;
+using GAS.RuntimeWithECS.Core;
+using GAS.RuntimeWithECS.GameplayEffect.Component;
 using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect
 {
     public static class GameplayEffectApplicator
     {
+        private static EntityManager _entityManager => GASManager.EntityManager;
+
+        
         /// <summary>
         /// 1.判断GE Application Condition是否生效
         /// 2.判断ApplicationRequiredTags
@@ -25,6 +30,23 @@ namespace GAS.RuntimeWithECS.GameplayEffect
                 return Entity.Null;
             }
             
+            // 4. 设置source，target
+            _entityManager.SetComponentData(gameplayEffect, new ComInUsage { Source = source, Target = target });
+            
+            // 5. 根据ge类型处理
+            bool hasDuration = _entityManager.HasComponent<ComDuration>(gameplayEffect);
+            if (hasDuration)
+            {
+                // Durational GE
+                //
+            }
+            else
+            {
+                // Instant GE
+                // effectSpec.Init(source, _owner, level);
+                // effectSpec.TriggerOnExecute();
+                return Entity.Null;
+            }
             // var level = overwriteEffectLevel ? effectLevel : source.Level;
             // if (effectSpec.DurationPolicy == EffectsDurationPolicy.Instant)
             // {
@@ -69,6 +91,17 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         private static bool IsConditionSatisfied()
         {
             return true;
+        }
+
+        
+        private static void ApplyInstantGameplayEffect()
+        {
+            // TODO
+        }
+        
+        private static void ApplyInstantDurationEffect()
+        {
+            // TODO
         }
     }
 }
