@@ -1,4 +1,5 @@
 ﻿using GAS.EditorForECS.GameplayEffect;
+using GAS.RuntimeWithECS.AbilitySystemCell;
 using GAS.RuntimeWithECS.AbilitySystemCell.Component;
 using GAS.RuntimeWithECS.Core;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
@@ -119,6 +120,49 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             }
             
             return false;
+        }
+
+        public static void InitGameplayEffect(this Entity gameplayEffect ,Entity source, Entity target, int level)
+        {
+            if (!_entityManager.HasComponent<ComInUsage>(gameplayEffect)) return;
+      
+            _entityManager.SetComponentData(gameplayEffect, new ComInUsage { Source = source, Target = target ,Level = level});
+
+            if (_entityManager.HasComponent<ComDuration>(gameplayEffect))
+            {
+                if (_entityManager.HasComponent<ComPeriod>(gameplayEffect))
+                {
+                    var period = _entityManager.GetComponentData<ComPeriod>(gameplayEffect);
+                    var periodGEs = period.GameplayEffects;
+                    foreach (var ge in periodGEs)
+                        ge.InitGameplayEffect(source, target, level);
+                }
+                
+                // TODO 
+                // SetGrantedAbility(GameplayEffect.GrantedAbilities);
+            }
+        }
+        
+        public static void TriggerOnExecute(this Entity gameplayEffect)
+        {
+            if (!_entityManager.HasComponent<ComInUsage>(gameplayEffect)) return;
+
+            var inUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
+
+            if (_entityManager.HasComponent<ComRemoveEffectWithTags>(gameplayEffect))
+            {
+                var comRemoveEffectWithTags = _entityManager.GetComponentData<ComRemoveEffectWithTags>(gameplayEffect);
+                var tags = comRemoveEffectWithTags.tags;
+                inUsage.Target.RemoveGameplayEffectWithAnyTags(tags);
+                // Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer
+                //     .RemoveGameplayEffectsWithTags);
+            }
+           
+            
+            Owner.ApplyModFromInstantGameplayEffect(this);
+            
+            // TODO
+            // TriggerCueOnExecute();
         }
     }
 }

@@ -16,5 +16,10 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
         /// 施加来源
         /// </summary>
         public Entity Source;
+
+        /// <summary>
+        /// GE 等级
+        /// </summary>
+        public int Level;
     }
 }
