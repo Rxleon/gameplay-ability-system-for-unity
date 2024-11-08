@@ -16,11 +16,22 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
             if (tags.Length==0) return;
 
             // TODO
-            var gameplayEffects = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
-            for (int i = 0; i < gameplayEffects.Length; i++)
+            var geBuff = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
+            for (var i = geBuff.Length - 1; i >= 0; i--)
             {
-                gameplayEffects.RemoveAt();
+                var ge = geBuff[i].GameplayEffect;
+                if (SystemAPI.IsComponentEnabled<ComInUsage>(ge)) continue;
+                geBuff.RemoveAt(i);
+                // 含有子实例的组件也要清理
+                if (SystemAPI.HasComponent<ComPeriod>(ge))
+                {
+                    var period = SystemAPI.GetComponentRO<ComPeriod>(ge);
+                    foreach (var sonGe in period.ValueRO.GameplayEffects)
+                        ecb.DestroyEntity(sonGe);
+                }
+                ecb.DestroyEntity(ge);
             }
+           
             
             // var removeList = new List<GameplayEffectSpec>();
             // foreach (var gameplayEffectSpec in _gameplayEffectSpecs)
