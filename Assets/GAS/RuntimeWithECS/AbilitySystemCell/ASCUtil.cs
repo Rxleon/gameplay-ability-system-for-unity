@@ -23,13 +23,13 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                 if (SystemAPI.IsComponentEnabled<ComInUsage>(ge)) continue;
                 geBuff.RemoveAt(i);
                 // 含有子实例的组件也要清理
-                if (SystemAPI.HasComponent<ComPeriod>(ge))
+                if (_entityManager.HasComponent<ComPeriod>(ge))
                 {
-                    var period = SystemAPI.GetComponentRO<ComPeriod>(ge);
-                    foreach (var sonGe in period.ValueRO.GameplayEffects)
-                        ecb.DestroyEntity(sonGe);
+                    var period = _entityManager.GetComponentData<ComPeriod>(ge);
+                    foreach (var sonGe in period.GameplayEffects)
+                        _entityManager.DestroyEntity(sonGe);
                 }
-                ecb.DestroyEntity(ge);
+                _entityManager.DestroyEntity(ge);
             }
            
             
