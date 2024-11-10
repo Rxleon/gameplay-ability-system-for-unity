@@ -69,32 +69,34 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             // // Check GE Stacking
             if (!isStacking)
                 return Operation_AddNewGameplayEffect(gameplayEffect,source,target ,level);
-            
-            
-            // TODO
-            // // 处理GE堆叠
-            // // 基于Target类型GE堆叠
-            // if (effectSpec.Stacking.stackingType == StackingType.AggregateByTarget)
-            // {
-            //     GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
-            //     // 新添加GE
-            //     if (geSpec == null)
-            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-            //     bool stackCountChange = geSpec.RefreshStack();
-            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-            //     return geSpec;
-            // }
-            //
-            // // 基于Source类型GE堆叠
-            // if (effectSpec.Stacking.stackingType == StackingType.AggregateBySource)
-            // {
-            //     GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect,source, out var geSpec);
-            //     if (geSpec == null)
-            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-            //     bool stackCountChange = geSpec.RefreshStack();
-            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-            //     return geSpec;
-            // }
+            else
+            {
+                var stacking = _entityManager.GetComponentData<ComStacking>(gameplayEffect);
+                // TODO
+                // // 处理GE堆叠
+                // // 基于Target类型GE堆叠
+                // if (effectSpec.Stacking.stackingType == StackingType.AggregateByTarget)
+                // {
+                //     GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
+                //     // 新添加GE
+                //     if (geSpec == null)
+                //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
+                //     bool stackCountChange = geSpec.RefreshStack();
+                //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+                //     return geSpec;
+                // }
+                //
+                // // 基于Source类型GE堆叠
+                // if (effectSpec.Stacking.stackingType == StackingType.AggregateBySource)
+                // {
+                //     GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect,source, out var geSpec);
+                //     if (geSpec == null)
+                //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
+                //     bool stackCountChange = geSpec.RefreshStack();
+                //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+                //     return geSpec;
+                // }
+            }
         }
         
         private static Entity Operation_AddNewGameplayEffect(Entity gameplayEffect,Entity source,Entity target,int level)
