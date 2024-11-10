@@ -15,7 +15,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         /// 2.判断ApplicationRequiredTags
         /// 3.判断ImmunityTags【触发Immunity Cue】
         /// </summary>
-        public static Entity TryApplyGameplayEffectTo(Entity gameplayEffect,Entity source,Entity target)
+        public static Entity TryApplyGameplayEffectTo(Entity gameplayEffect,Entity source,Entity target,int level = 1)
         {
             // 1. GE Application Condition
             if (!IsConditionSatisfied()) return Entity.Null;
@@ -38,42 +38,13 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             if (hasDuration)
             {
                 // Durational GE
-                // // Check GE Stacking
-                // if (effectSpec.Stacking.stackingType == StackingType.None)
-                // {
-                //     return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-                // }
-                //
-                // // 处理GE堆叠
-                // // 基于Target类型GE堆叠
-                // if (effectSpec.Stacking.stackingType == StackingType.AggregateByTarget)
-                // {
-                //     GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
-                //     // 新添加GE
-                //     if (geSpec == null)
-                //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-                //     bool stackCountChange = geSpec.RefreshStack();
-                //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-                //     return geSpec;
-                // }
-                //
-                // // 基于Source类型GE堆叠
-                // if (effectSpec.Stacking.stackingType == StackingType.AggregateBySource)
-                // {
-                //     GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect,source, out var geSpec);
-                //     if (geSpec == null)
-                //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-                //     bool stackCountChange = geSpec.RefreshStack();
-                //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-                //     return geSpec;
-                // }
+                return ApplyInstantDurationEffect(gameplayEffect,source,target,level);
             }
             else
             {
-                // Instant GE
-                // effectSpec.Init(source, _owner, level);
-                // effectSpec.TriggerOnExecute();
-                return Entity.Null;
+                // Instant 
+                return ApplyInstantGameplayEffect(gameplayEffect,source,target,level);
+
             }
 
             return Entity.Null;
@@ -85,14 +56,77 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         }
 
         
-        private static void ApplyInstantGameplayEffect()
+        private static Entity ApplyInstantGameplayEffect(Entity gameplayEffect,Entity source,Entity target,int level)
         {
-            // TODO
+            gameplayEffect.InitGameplayEffect(source, target, level);
+            gameplayEffect.TriggerOnExecute();
+            return Entity.Null;
         }
         
-        private static void ApplyInstantDurationEffect()
+        private static Entity ApplyInstantDurationEffect(Entity gameplayEffect,Entity source,Entity target,int level)
         {
+            bool isStacking = _entityManager.HasComponent<ComStacking>(gameplayEffect);
+            // // Check GE Stacking
+            if (!isStacking)
+                return Operation_AddNewGameplayEffect(gameplayEffect,source,target ,level);
+            
+            
             // TODO
+            // // 处理GE堆叠
+            // // 基于Target类型GE堆叠
+            // if (effectSpec.Stacking.stackingType == StackingType.AggregateByTarget)
+            // {
+            //     GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
+            //     // 新添加GE
+            //     if (geSpec == null)
+            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
+            //     bool stackCountChange = geSpec.RefreshStack();
+            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+            //     return geSpec;
+            // }
+            //
+            // // 基于Source类型GE堆叠
+            // if (effectSpec.Stacking.stackingType == StackingType.AggregateBySource)
+            // {
+            //     GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect,source, out var geSpec);
+            //     if (geSpec == null)
+            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
+            //     bool stackCountChange = geSpec.RefreshStack();
+            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+            //     return geSpec;
+            // }
+        }
+        
+        private static Entity Operation_AddNewGameplayEffect(Entity gameplayEffect,Entity source,Entity target,int level)
+        {
+            // 1.初始化
+            gameplayEffect.InitGameplayEffect(source, target, level);
+            
+            // 2.添加GE到target
+            var geBuffers = GameplayEffectUtils.GameplayEffectsOf(target);
+            geBuffers.Add(new GameplayEffectBufferElement { GameplayEffect = gameplayEffect });
+            
+            // 3.触发OnAdd的Cue
+            // TODO TriggerCueOnAdd
+            // effectSpec.TriggerCueOnAdd();
+            //TriggerCueOnAdd
+            
+            // 4.执行GE
+            gameplayEffect.EffectApply();
+
+            // If the gameplay effect was removed immediately after being applied, return false
+            if (!_gameplayEffectSpecs.Contains(gameplayEffect))
+            {
+#if UNITY_EDITOR
+                UnityEngine.Debug.LogWarning(
+                    $"GameplayEffect {gameplayEffect.ToString()} was removed immediately after being applied. This may indicate a problem with the RemoveGameplayEffectsWithTags.");
+#endif
+                // No need to trigger OnGameplayEffectContainerIsDirty, it has already been triggered when it was removed.
+                return Entity.Null;
+            }
+
+            OnGameplayEffectContainerIsDirty?.Invoke();
+            return gameplayEffect;
         }
     }
 }

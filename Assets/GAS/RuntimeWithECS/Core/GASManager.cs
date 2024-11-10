@@ -14,6 +14,8 @@ namespace GAS.RuntimeWithECS.Core
         public static bool IsRunning { get; private set;}
         
         public static bool IsInitialized { get; private set; }
+        
+        public static Entity EntityGlobalTimer { get; private set; }
 
         public static void Initialize()
         {
@@ -29,7 +31,7 @@ namespace GAS.RuntimeWithECS.Core
             TurnController ??= new TurnController();
             EntityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             // 系统逻辑帧计时器
-            World.DefaultGameObjectInjectionWorld.EntityManager.CreateSingleton<GlobalTimer>();
+            EntityGlobalTimer = World.DefaultGameObjectInjectionWorld.EntityManager.CreateSingleton<GlobalTimer>();
             IsInitialized = true;
         }
 
