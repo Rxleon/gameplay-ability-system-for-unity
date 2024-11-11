@@ -20,6 +20,8 @@ namespace GAS.Runtime
 
         private event Action<int, int> OnStackChanged;
 
+        public bool IsValid => this.InstanceId != 0;
+
         public ulong InstanceId { get; private set; }
 
         public bool IsFromPool { get; set; }
