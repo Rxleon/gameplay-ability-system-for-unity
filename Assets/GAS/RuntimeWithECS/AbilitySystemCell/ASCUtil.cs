@@ -162,5 +162,43 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                     return true;
             return false;
         }
+        
+        /// <summary>
+        /// GE列表为脏，需要重新计算Attribute的Current Value
+        /// </summary>
+        /// <param name="asc"></param>
+        public static void GameplayEffectListIsDirty(this Entity asc)
+        {
+            // 1.尝试更新自身的Attribute的Current Value
+            asc.TryRecalculateAttributeCurrentValue();
+
+            // TODO 2.触发 OnGameplayEffectListIsDirty 注册的事件
+        }
+
+        #region 重计算AttrSet Current Value相关工具函数
+
+        /// <summary>
+        /// 尝试重计算
+        /// </summary>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public static bool TryRecalculateAttributeCurrentValue(this Entity asc)
+        {
+            var attrSets = _entityManager.GetBuffer<AttributeSetBufferElement>(asc);
+
+            foreach (var attrSet in attrSets)
+            {
+                foreach (var attr in attrSet.Attributes)
+                {
+                    // if (!attr.Dirty) continue;
+                    // attr.CurrentValue = GASHub.Calculate(asc, attr);
+                    // attr.Dirty = false;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
     }
 }

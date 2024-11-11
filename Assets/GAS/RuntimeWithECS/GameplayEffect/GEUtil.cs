@@ -203,5 +203,28 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         {
             
         }
+
+        #region TriggerCue
+
+        public static void TriggerCueOnAdd(this Entity gameplayEffect)
+        {
+            
+        }
+
+        public static void TriggerCueOnRemove(this Entity gameplayEffect)
+        {
+            
+        }
+
+        public static void TriggerCueOnExecute(this Entity gameplayEffect)
+        {
+            
+        }
+
+        public static void TriggerCueOnActivation(this Entity gameplayEffect)
+        {
+            
+        }
+        #endregion
     }
 }

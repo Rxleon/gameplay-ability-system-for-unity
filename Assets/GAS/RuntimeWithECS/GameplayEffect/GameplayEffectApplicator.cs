@@ -112,9 +112,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             geBuffers.Add(new GameplayEffectBufferElement { GameplayEffect = gameplayEffect });
             
             // 3.触发OnAdd的Cue
-            // TODO TriggerCueOnAdd
-            // effectSpec.TriggerCueOnAdd();
-            //TriggerCueOnAdd
+            gameplayEffect.TriggerCueOnAdd();
             
             // 4.执行GE
             gameplayEffect.EffectApply();
@@ -130,8 +128,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
                 return Entity.Null;
             }
 
-            // TODO 触发Effect Is Dirty
-            OnGameplayEffectContainerIsDirty?.Invoke();
+            // 触发Effect Is Dirty
+            target.GameplayEffectListIsDirty();
             return gameplayEffect;
         }
     }
