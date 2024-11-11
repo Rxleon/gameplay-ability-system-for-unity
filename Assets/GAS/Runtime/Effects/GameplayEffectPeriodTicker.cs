@@ -31,6 +31,12 @@ namespace GAS.Runtime
 
             UpdatePeriod();
 
+            // 上面的代码可能导致spec被移除了, 需要再次判断spec的有效性
+            if (!_spec.IsValid)
+            {
+                return;
+            }
+
             if (_spec.DurationPolicy == EffectsDurationPolicy.Duration && _spec.DurationRemaining() <= 0)
             {
                 // 处理STACKING
