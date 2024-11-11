@@ -1,4 +1,5 @@
 using GAS.Runtime;
+using GAS.RuntimeWithECS.AbilitySystemCell;
 using GAS.RuntimeWithECS.Core;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
 using Unity.Entities;
@@ -75,28 +76,28 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             // TODO
             // 处理GE堆叠
             // 基于Target类型GE堆叠
-            if (stacking.StackingType == EffectStackingType.AggregateByTarget)
-            {
-                GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
-                // 新添加GE
-                if (geSpec == null)
-                    return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
-                bool stackCountChange = geSpec.RefreshStack();
-                if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-                return geSpec;
-            }
-                
-            // 基于Source类型GE堆叠
-            if (stacking.StackingType == EffectStackingType.AggregateBySource)
-            {
-                GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect, source, out var geSpec);
-                if (geSpec == null)
-                    return Operation_AddNewGameplayEffectSpec(source, effectSpec, overwriteEffectLevel,
-                        effectLevel);
-                bool stackCountChange = geSpec.RefreshStack();
-                if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
-                return geSpec;
-            }
+            // if (stacking.StackingType == EffectStackingType.AggregateByTarget)
+            // {
+            //     GetStackingEffectSpecByData(effectSpec.GameplayEffect, out var geSpec);
+            //     // 新添加GE
+            //     if (geSpec == null)
+            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec,overwriteEffectLevel,effectLevel);
+            //     bool stackCountChange = geSpec.RefreshStack();
+            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+            //     return geSpec;
+            // }
+            //     
+            // // 基于Source类型GE堆叠
+            // if (stacking.StackingType == EffectStackingType.AggregateBySource)
+            // {
+            //     GetStackingEffectSpecByDataFrom(effectSpec.GameplayEffect, source, out var geSpec);
+            //     if (geSpec == null)
+            //         return Operation_AddNewGameplayEffectSpec(source, effectSpec, overwriteEffectLevel,
+            //             effectLevel);
+            //     bool stackCountChange = geSpec.RefreshStack();
+            //     if (stackCountChange) OnRefreshStackCountMakeContainerDirty();
+            //     return geSpec;
+            // }
             
             return Entity.Null;
         }
@@ -119,7 +120,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             gameplayEffect.EffectApply();
 
             // If the gameplay effect was removed immediately after being applied, return false
-            if (!_gameplayEffectSpecs.Contains(gameplayEffect))
+            if (!target.HasGameplayEffect(gameplayEffect))
             {
 #if UNITY_EDITOR
                 UnityEngine.Debug.LogWarning(

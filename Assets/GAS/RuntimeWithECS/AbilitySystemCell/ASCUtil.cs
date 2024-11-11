@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GAS.Runtime;
 using GAS.RuntimeWithECS.Attribute.Component;
 using GAS.RuntimeWithECS.AttributeSet.Component;
@@ -53,13 +52,13 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
             {
                 var magnitude = MmcHub.Calculate(gameplayEffect, mod);
 
-                int attrSetIndex = attrSets.IndexOfAttrSetCode(mod.AttrSetCode);
+                var attrSetIndex = attrSets.IndexOfAttrSetCode(mod.AttrSetCode);
                 if (attrSetIndex == -1) continue;
 
                 var attrSet = attrSets[attrSetIndex];
                 var attributes = attrSet.Attributes;
 
-                int attrIndex = attributes.IndexOfAttrCode(mod.AttrCode);
+                var attrIndex = attributes.IndexOfAttrCode(mod.AttrCode);
                 if (attrIndex == -1) continue;
 
                 var attr = attributes[attrIndex];
@@ -85,27 +84,27 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 // OnChangeBefore
                 // BaseValue 不做钳制，因为Max，Min是只针对Current Value
-                newValue = GASEventCenter.InvokeOnBaseValueChangeBefore(asc,mod.AttrSetCode,mod.AttrCode,newValue);
-                
+                newValue = GASEventCenter.InvokeOnBaseValueChangeBefore(asc, mod.AttrSetCode, mod.AttrCode, newValue);
+
                 attr.BaseValue = newValue;
-                
+
                 // OnChangeAfter
                 if (newValue != oldValue)
                 {
                     // BaseValue 改变，需要标记Dirty
                     attr.Dirty = true;
                     GASManager.EntityManager.AddComponent<AttributeIsDirty>(asc);
-                    GASEventCenter.InvokeOnBaseValueChangeAfter(asc,mod.AttrSetCode,mod.AttrCode,oldValue,newValue);
+                    GASEventCenter.InvokeOnBaseValueChangeAfter(asc, mod.AttrSetCode, mod.AttrCode, oldValue, newValue);
                 }
-                
+
                 attrSet.Attributes[attrIndex] = attr;
                 attrSets[attrSetIndex] = attrSet;
             }
         }
-        
+
         public static bool CheckAscHasAllTags(this Entity asc, NativeArray<int> tags)
         {
             var fixedTags = _entityManager.GetBuffer<BuffElemFixedTag>(asc);
@@ -135,7 +134,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
 
             return true;
         }
-        
+
         public static bool CheckAscHasAnyTags(this Entity asc, NativeArray<int> tags)
         {
             var fixedTags = _entityManager.GetBuffer<BuffElemFixedTag>(asc);
@@ -152,6 +151,15 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                         return true;
             }
 
+            return false;
+        }
+
+        public static bool HasGameplayEffect(this Entity asc, Entity gameplayEffect)
+        {
+            var geBuff = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
+            foreach (var geElem in geBuff)
+                if (geElem.GameplayEffect == gameplayEffect)
+                    return true;
             return false;
         }
     }
