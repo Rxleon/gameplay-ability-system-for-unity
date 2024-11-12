@@ -415,13 +415,17 @@ namespace GAS.Runtime
 
         public void TriggerOnExecute()
         {
-            Owner.ApplyModFromInstantGameplayEffect(this);
             TriggerCueOnExecute();
-
-            // 注意: 可能会移除自身!!!
-            // 当作为execution存在时, RemoveGameplayEffectWithAnyTags可能移除掉父spec(触发本次Execute的GESpec), 父spec在移除时把当前的spec清理了 
-            Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer
-                .RemoveGameplayEffectsWithTags);
+            Owner.ApplyModFromInstantGameplayEffect(this);
+            
+            // 如果某处监听了属性变化, 触发了移除父ge, 则当前ge可能已经失效
+            if (IsValid)
+            {
+                // 注意: 可能会移除自身!!!
+                // 当作为execution存在时, RemoveGameplayEffectWithAnyTags可能移除掉父spec(触发本次Execute的GESpec), 父spec在移除时把当前的spec清理了 
+                Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer
+                    .RemoveGameplayEffectsWithTags);
+            }
         }
 
         public void TriggerOnAdd()
