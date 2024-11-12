@@ -414,11 +414,16 @@ namespace GAS.Runtime
 
         public void TriggerOnExecute()
         {
+            TriggerCueOnExecute();
+            
+            // 注意: 可能会移除自身!!!
             Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer
                 .RemoveGameplayEffectsWithTags);
-            Owner.ApplyModFromInstantGameplayEffect(this);
-
-            TriggerCueOnExecute();
+            
+            if (this.IsValid)
+            {
+                Owner.ApplyModFromInstantGameplayEffect(this);
+            }
         }
 
         public void TriggerOnAdd()
