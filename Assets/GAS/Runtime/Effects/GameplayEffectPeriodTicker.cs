@@ -103,7 +103,8 @@ namespace GAS.Runtime
 
             _periodRemaining -= dt;
 
-            while (_periodRemaining < 0)
+            // period可能导致_spec失活/移除
+            while (_spec.IsValid && _spec.IsActive && _periodRemaining < 0)
             {
                 // 不能直接将_periodRemaining重置为Period, 这将累计误差
                 _periodRemaining += Period;
