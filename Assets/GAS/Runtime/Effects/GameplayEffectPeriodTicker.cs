@@ -6,6 +6,8 @@ namespace GAS.Runtime
     {
         public ulong InstanceId { get; private set; }
 
+        public bool IsValid => InstanceId != 0;
+
         private float _periodRemaining;
         private GameplayEffectSpec _spec;
 
@@ -31,8 +33,8 @@ namespace GAS.Runtime
 
             UpdatePeriod();
 
-            // 上面的代码可能导致spec被移除了, 需要再次判断spec的有效性
-            if (!_spec.IsValid)
+            // 上面的代码可能导致spec或自身被移除, 需要再次判断有效性
+            if (!this.IsValid || !_spec.IsValid)
             {
                 return;
             }
