@@ -20,7 +20,7 @@ namespace GAS.Runtime
 
         private event Action<int, int> OnStackChanged;
 
-        public bool IsValid => this.InstanceId != 0;
+        public bool IsValid => InstanceId != 0;
 
         public ulong InstanceId { get; private set; }
 
@@ -128,9 +128,10 @@ namespace GAS.Runtime
 
                 OnImmunityBlock = default;
                 OnStackChanged = default;
-            }
 
-            ObjectPool.Instance.Recycle(this);
+                // InstanceId为0的不做回收处理, 避免重复回收
+                ObjectPool.Instance.Recycle(this);
+            }
         }
 
         public void Init(AbilitySystemComponent source, AbilitySystemComponent owner, float level = 1)
@@ -414,16 +415,13 @@ namespace GAS.Runtime
 
         public void TriggerOnExecute()
         {
+            Owner.ApplyModFromInstantGameplayEffect(this);
             TriggerCueOnExecute();
-            
+
             // 注意: 可能会移除自身!!!
+            // 当作为execution存在时, RemoveGameplayEffectWithAnyTags可能移除掉父spec(触发本次Execute的GESpec), 父spec在移除时把当前的spec清理了 
             Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer
                 .RemoveGameplayEffectsWithTags);
-            
-            if (this.IsValid)
-            {
-                Owner.ApplyModFromInstantGameplayEffect(this);
-            }
         }
 
         public void TriggerOnAdd()
@@ -433,8 +431,8 @@ namespace GAS.Runtime
 
         public void TriggerOnRemove()
         {
-            TryRemoveGrantedAbilities();
             TriggerCueOnRemove();
+            TryRemoveGrantedAbilities();
         }
 
         private void TriggerOnActivation()
@@ -442,8 +440,15 @@ namespace GAS.Runtime
             Owner.GameplayTagAggregator.ApplyGameplayEffectDynamicTag(this);
             Owner.GameplayEffectContainer.RemoveGameplayEffectWithAnyTags(GameplayEffect.TagContainer.RemoveGameplayEffectsWithTags);
 
-            TryActivateGrantedAbilities();
-            TriggerCueOnActivation();
+            if (IsValid)
+            {
+                TryActivateGrantedAbilities();
+                // ability可能导致自身失效
+                if (IsValid)
+                {
+                    TriggerCueOnActivation();
+                }
+            }
         }
 
         private void TriggerOnDeactivation()
@@ -451,7 +456,11 @@ namespace GAS.Runtime
             Owner.GameplayTagAggregator.RestoreGameplayEffectDynamicTags(this);
 
             TryDeactivateGrantedAbilities();
-            TriggerCueOnDeactivation();
+            // ability可能导致自身失效
+            if (IsValid)
+            {
+                TriggerCueOnDeactivation();
+            }
         }
 
         public void TriggerOnTick()
@@ -666,19 +675,23 @@ namespace GAS.Runtime
                 foreach (var overflowEffect in Stacking.overflowEffects)
                     Owner.ApplyGameplayEffectToSelf(overflowEffect);
 
-                if (Stacking.durationRefreshPolicy == DurationRefreshPolicy.RefreshOnSuccessfulApplication)
+                // 溢出GE可能移除当前GE
+                if (IsValid)
                 {
-                    if (Stacking.denyOverflowApplication)
+                    if (Stacking.durationRefreshPolicy == DurationRefreshPolicy.RefreshOnSuccessfulApplication)
                     {
-                        //当DenyOverflowApplication为True是才有效，当Overflow时是否直接删除所有层数
-                        if (Stacking.clearStackOnOverflow)
+                        if (Stacking.denyOverflowApplication)
                         {
-                            RemoveSelf();
+                            //当DenyOverflowApplication为True是才有效，当Overflow时是否直接删除所有层数
+                            if (Stacking.clearStackOnOverflow)
+                            {
+                                RemoveSelf();
+                            }
                         }
-                    }
-                    else
-                    {
-                        RefreshDuration();
+                        else
+                        {
+                            RefreshDuration();
+                        }
                     }
                 }
             }
