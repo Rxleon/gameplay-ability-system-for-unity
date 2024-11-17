@@ -190,7 +190,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
             {
                 foreach (var attr in attrSet.Attributes)
                 {
-                    // if (!attr.Dirty) continue;
+                    if (!attr.Dirty) continue;
                     // attr.CurrentValue = GASHub.Calculate(asc, attr);
                     // attr.Dirty = false;
                 }

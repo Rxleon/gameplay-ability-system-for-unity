@@ -11,6 +11,7 @@ namespace GAS.RuntimeWithECS.Attribute.Component
         public float MinValue;
         public float MaxValue;
         public bool Dirty;
+        
 
         public static readonly AttributeData NULL = new()
         {
