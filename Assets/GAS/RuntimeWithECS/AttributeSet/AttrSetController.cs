@@ -48,13 +48,18 @@ namespace GAS.RuntimeWithECS.AttributeSet
             for (var i = 0; i < config.Settings.Length; i++)
             {
                 var setting = config.Settings[i];
+                // 创建每个属性的追踪器
+                var tracker = EntityManager.CreateEntity();
+                EntityManager.AddBuffer<BuffEleEffectingAttribute>(tracker);
+                EntityManager.AddBuffer<BuffEleEffectedGameplayEffect>(tracker);
                 newAttrs[i] = new AttributeData
                 {
                     Code = setting.Code,
                     BaseValue = setting.InitValue,
                     CurrentValue = setting.InitValue,
                     MinValue = setting.Min,
-                    MaxValue = setting.Max
+                    MaxValue = setting.Max,
+                    Tracker = tracker,
                 };
             }
 

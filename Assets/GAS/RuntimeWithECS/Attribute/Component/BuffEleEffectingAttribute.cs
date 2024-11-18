@@ -2,11 +2,10 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.AttributeSet.Component
 {
-    public struct AttributeTracker : IComponentData
+    public struct BuffEleEffectingAttribute : IBufferElementData
     {
+        public Entity TargetASC;
         public int AttrSetCode;
         public int AttrCode;
-        public Entity BasedASC;
-        
     }
 }
