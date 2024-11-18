@@ -50,7 +50,7 @@ namespace GAS.RuntimeWithECS.AttributeSet
                 var setting = config.Settings[i];
                 // 创建每个属性的追踪器
                 var tracker = EntityManager.CreateEntity();
-                EntityManager.AddBuffer<BuffEleEffectingAttribute>(tracker);
+                EntityManager.AddBuffer<BuffEleDependentAttribute>(tracker);
                 EntityManager.AddBuffer<BuffEleEffectedGameplayEffect>(tracker);
                 
                 newAttrs[i] = new AttributeData

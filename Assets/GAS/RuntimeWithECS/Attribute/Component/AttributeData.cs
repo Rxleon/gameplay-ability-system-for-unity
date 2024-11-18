@@ -11,6 +11,12 @@ namespace GAS.RuntimeWithECS.Attribute.Component
         public float MinValue;
         public float MaxValue;
         public bool Dirty;
+        
+        /// <summary>
+        /// 属性追踪器：用于追踪属性变化的连锁反应
+        /// 1.影响该属性的GE
+        /// 2.该属性依赖的追踪（Track）属性
+        /// </summary>
         public Entity Tracker;
         
 
