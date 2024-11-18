@@ -52,6 +52,7 @@ namespace GAS.RuntimeWithECS.AttributeSet
                 var tracker = EntityManager.CreateEntity();
                 EntityManager.AddBuffer<BuffEleEffectingAttribute>(tracker);
                 EntityManager.AddBuffer<BuffEleEffectedGameplayEffect>(tracker);
+                
                 newAttrs[i] = new AttributeData
                 {
                     Code = setting.Code,
