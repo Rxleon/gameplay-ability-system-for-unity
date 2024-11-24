@@ -37,8 +37,6 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
                 foreach (var mod in modifiers)
                 {
-                    var magnitude = MmcHub.Calculate(geEntity, mod);
-
                     int attrSetIndex = attrSets.IndexOfAttrSetCode(mod.AttrSetCode);
                     if(attrSetIndex==-1) continue;
                     
@@ -49,28 +47,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                     if(attrIndex==-1) continue;
                     
                     var data = attributes[attrIndex];
-                    var baseValue = data.BaseValue;
-                    switch (mod.Operation)
-                    {
-                        case GEOperation.Add:
-                            baseValue += magnitude;
-                            break;
-                        case GEOperation.Minus:
-                            baseValue -= magnitude;
-                            break;
-                        case GEOperation.Multiply:
-                            baseValue *= magnitude;
-                            break;
-                        case GEOperation.Divide:
-                            baseValue /= magnitude;
-                            break;
-                        case GEOperation.Override:
-                            baseValue = magnitude;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
+                    var baseValue = MmcHub.Calculate(geEntity, mod, data.BaseValue);
                     // 加入base value 更新队列
                     GasQueueCenter.AddBaseValueUpdateInfo(asc,mod.AttrSetCode,mod.AttrCode,baseValue);
                     
