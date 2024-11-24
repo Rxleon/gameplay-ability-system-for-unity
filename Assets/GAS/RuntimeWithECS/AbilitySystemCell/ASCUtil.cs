@@ -162,9 +162,9 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                     return true;
             return false;
         }
-        
+
         /// <summary>
-        /// GE列表为脏，需要重新计算Attribute的Current Value
+        ///     GE列表为脏，需要重新计算Attribute的Current Value
         /// </summary>
         /// <param name="asc"></param>
         public static void GameplayEffectListIsDirty(this Entity asc)
@@ -178,21 +178,45 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
         #region 重计算AttrSet Current Value相关工具函数
 
         /// <summary>
-        /// 尝试重计算
+        ///     尝试重计算
         /// </summary>
         /// <param name="asc"></param>
         /// <returns></returns>
         public static bool TryRecalculateAttributeCurrentValue(this Entity asc)
         {
             var attrSets = _entityManager.GetBuffer<AttributeSetBufferElement>(asc);
-
-            foreach (var attrSet in attrSets)
+            var effects = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
+            for (var attrSetIndex = 0; attrSetIndex < attrSets.Length; attrSetIndex++)
             {
-                foreach (var attr in attrSet.Attributes)
+                var attrSet = attrSets[attrSetIndex];
+                for (var attrIndex = 0; attrIndex < attrSet.Attributes.Length; attrIndex++)
                 {
+                    var attr = attrSet.Attributes[attrIndex];
                     if (!attr.Dirty) continue;
-                    // attr.CurrentValue = GASHub.Calculate(asc, attr);
-                    // attr.Dirty = false;
+
+
+                    var oldValue = attr.CurrentValue;
+                    var newValue = oldValue;
+                    // 遍历当前asc的GE队列重计算Current Value
+                    foreach (var element in effects)
+                    {
+                        var ge = element.GameplayEffect;
+                        var mods = _entityManager.GetBuffer<BuffEleModifier>(ge);
+                        foreach (var modElement in mods)
+                            if (modElement.AttrSetCode == attrSet.Code && modElement.AttrCode == attr.Code)
+                                newValue = MmcHub.Calculate(ge, modElement, newValue);
+                    }
+
+                    attr.CurrentValue = newValue;
+                    // OnChangeAfter
+                    if (newValue != oldValue)
+                        GASEventCenter.InvokeOnCurrentValueChangeAfter(asc, attrSet.Code, attr.Code, oldValue,
+                            newValue);
+                    // CurrentValue改变完成，取消标记Dirty
+                    attr.Dirty = false;
+
+                    attrSet.Attributes[attrIndex] = attr;
+                    attrSets[attrSetIndex] = attrSet;
                 }
             }
 
