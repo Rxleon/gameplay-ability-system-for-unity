@@ -184,6 +184,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
         /// <returns></returns>
         public static bool TryRecalculateAttributeCurrentValue(this Entity asc)
         {
+            bool isValueChanged = false;
             var attrSets = _entityManager.GetBuffer<AttributeSetBufferElement>(asc);
             var effects = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
             for (var attrSetIndex = 0; attrSetIndex < attrSets.Length; attrSetIndex++)
@@ -210,8 +211,12 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                     attr.CurrentValue = newValue;
                     // OnChangeAfter
                     if (newValue != oldValue)
-                        GASEventCenter.InvokeOnCurrentValueChangeAfter(asc, attrSet.Code, attr.Code, oldValue,
-                            newValue);
+                    {
+                        GASEventCenter.InvokeOnCurrentValueChangeAfter(
+                            asc, attrSet.Code, attr.Code, oldValue, newValue);
+                        isValueChanged = true;
+                    }
+
                     // CurrentValue改变完成，取消标记Dirty
                     attr.Dirty = false;
 
@@ -220,7 +225,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                 }
             }
 
-            return false;
+            return isValueChanged;
         }
 
         #endregion
