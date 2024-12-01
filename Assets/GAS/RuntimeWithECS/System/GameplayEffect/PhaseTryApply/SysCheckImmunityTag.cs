@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupTryApplyEffect))]
-    [UpdateAfter(typeof(SysCheckApplyCondition))]
+    [UpdateAfter(typeof(SysCheckApplicationCondition))]
     public partial struct SysCheckImmunityTag : ISystem
     {
         [BurstCompile]

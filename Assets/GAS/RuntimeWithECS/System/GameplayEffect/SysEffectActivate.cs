@@ -16,7 +16,6 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            ulong s = 100;
             state.RequireForUpdate<ComNeedActivate>();
         }
 
