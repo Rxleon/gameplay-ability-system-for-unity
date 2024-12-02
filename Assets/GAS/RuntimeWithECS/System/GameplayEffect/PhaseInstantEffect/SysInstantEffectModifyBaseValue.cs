@@ -20,54 +20,55 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BuffEleModifier>();
+            state.RequireForUpdate<ComInApplicationProgress>();
+            state.RequireForUpdate<ComValidEffect>();
+            state.RequireForUpdate<ComInUsage>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            // var ecb = new EntityCommandBuffer(Allocator.Temp);
-            //
-            // foreach (var (modifiers, _, geEntity) in SystemAPI
-            //              .Query<DynamicBuffer<BuffEleModifier>, RefRO<ComInUsage>>().WithNone<ComDuration>()
-            //              .WithEntityAccess())
-            // {
-            //     // 过滤掉已经不合法的Instant GE
-            //     if(!SystemAPI.IsComponentEnabled<ComInUsage>(geEntity)) continue;
-            //     
-            //     var asc = SystemAPI.GetComponentRO<ComInUsage>(geEntity).ValueRO.Target;
-            //     var attrSets = SystemAPI.GetBuffer<AttributeSetBufferElement>(asc);
-            //
-            //     foreach (var mod in modifiers)
-            //     {
-            //         int attrSetIndex = attrSets.IndexOfAttrSetCode(mod.AttrSetCode);
-            //         if(attrSetIndex==-1) continue;
-            //         
-            //         var attrSet = attrSets[attrSetIndex];
-            //         var attributes = attrSet.Attributes;
-            //
-            //         int attrIndex = attributes.IndexOfAttrCode(mod.AttrCode);
-            //         if(attrIndex==-1) continue;
-            //         
-            //         var data = attributes[attrIndex];
-            //         var baseValue = MmcHub.Calculate(geEntity, mod, data.BaseValue);
-            //         // 加入base value 更新队列
-            //         GasQueueCenter.AddBaseValueUpdateInfo(asc,mod.AttrSetCode,mod.AttrCode,baseValue);
-            //         
-            //         
-            //         // data.TriggerCueEvent = true;
-            //         // data.Dirty = true;
-            //         // ecb.AddComponent<ComAttributeDirty>(geEntity);
-            //         //
-            //         // attrSet.Attributes[attrIndex] = data;
-            //         // attrSets[attrSetIndex] = attrSet;
-            //         
-            //         // 应用完成的Instant GE，使其不合法
-            //         ecb.SetComponentEnabled<ComInUsage>(geEntity, false);
-            //     }
-            //
-            // }
-            //
-            // ecb.Playback(state.EntityManager);
-            // ecb.Dispose();
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            
+            foreach (var (modifiers,_,_,_, geEntity) in SystemAPI
+                         .Query<DynamicBuffer<BuffEleModifier>,RefRO<ComInApplicationProgress>,RefRO<ComValidEffect>, RefRO<ComInUsage>>()
+                         .WithNone<ComDuration>()
+                         .WithEntityAccess())
+            {
+                var asc = SystemAPI.GetComponentRO<ComInUsage>(geEntity).ValueRO.Target;
+                var attrSets = SystemAPI.GetBuffer<AttributeSetBufferElement>(asc);
+            
+                foreach (var mod in modifiers)
+                {
+                    int attrSetIndex = attrSets.IndexOfAttrSetCode(mod.AttrSetCode);
+                    if(attrSetIndex==-1) continue;
+                    
+                    var attrSet = attrSets[attrSetIndex];
+                    var attributes = attrSet.Attributes;
+            
+                    int attrIndex = attributes.IndexOfAttrCode(mod.AttrCode);
+                    if(attrIndex==-1) continue;
+                    
+                    var data = attributes[attrIndex];
+                    var baseValue = MmcHub.Calculate(geEntity, mod, data.BaseValue);
+                    // 加入base value 更新队列
+                    GasQueueCenter.AddBaseValueUpdateInfo(asc,mod.AttrSetCode,mod.AttrCode,baseValue);
+                    
+                    
+                    // data.TriggerCueEvent = true;
+                    // data.Dirty = true;
+                    // ecb.AddComponent<ComAttributeDirty>(geEntity);
+                    //
+                    // attrSet.Attributes[attrIndex] = data;
+                    // attrSets[attrSetIndex] = attrSet;
+                    
+                    // 应用完成的Instant GE，使其不合法
+                    ecb.SetComponentEnabled<ComInUsage>(geEntity, false);
+                }
+            
+            }
+            
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
 
         [BurstCompile]
