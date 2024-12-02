@@ -40,7 +40,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void ApplyGameplayEffectTo(Entity gameplayEffect, Entity target, Entity source)
         {
-            _entityManager.AddComponent<ComNeedInit>(gameplayEffect);
+            _entityManager.AddComponent<ComInApplicationProgress>(gameplayEffect);
             _entityManager.AddComponent<ComInUsage>(gameplayEffect);
             _entityManager.AddComponent<NeedCheckEffects>(target);
             var comInUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
