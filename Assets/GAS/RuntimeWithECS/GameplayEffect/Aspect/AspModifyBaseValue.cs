@@ -15,13 +15,16 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Aspect
         private readonly RefRO<ComInApplicationProgress> _inApplicationProgress;
         private readonly DynamicBuffer<BuffEleModifier> _modifiers;
 
-        public void ModifyBaseValue()
+        public Entity ASC => _inUsage.ValueRO.Target;
+        
+        public bool ModifyBaseValue()
         {
             // 排除掉Durational的GE类型
             var isDurational = GASManager.EntityManager.HasComponent<ComDuration>(self);
-            if (isDurational) return;
+            if (isDurational) return false;
 
             var asc = _inUsage.ValueRO.Target;
+            bool changed = false;
             var attrSets = GASManager.EntityManager.GetBuffer<AttributeSetBufferElement>(asc);
             foreach (var mod in _modifiers)
             {
@@ -49,13 +52,15 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Aspect
                 {
                     // BaseValue 改变，需要标记Dirty
                     data.Dirty = true;
-                    GASManager.EntityManager.AddComponent<AttributeIsDirty>(asc);
+                    changed = true;
                     GASEventCenter.InvokeOnBaseValueChangeAfter(asc, mod.AttrSetCode, mod.AttrCode, oldValue, newValue);
                 }
 
                 attrSet.Attributes[attrIndex] = data;
                 attrSets[attrSetIndex] = attrSet;
             }
+
+            return changed;
         }
     }
 }

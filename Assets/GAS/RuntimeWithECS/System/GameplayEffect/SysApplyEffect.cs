@@ -18,13 +18,13 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         //[BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var queue = GasQueueCenter.EffectsWaitingForApplication();
-            
-            //应用GE
-            foreach (var effect in queue)
-                GEUtil.ApplyGameplayEffectTo(effect.GameplayEffect,effect.TargetAsc,effect.SourceAsc);
-            
-            if(queue.Count>0) GasQueueCenter.ClearEffectsWaitingForApplication();
+            // var queue = GasQueueCenter.EffectsWaitingForApplication();
+            //
+            // //应用GE
+            // foreach (var effect in queue)
+            //     GEUtil.ApplyGameplayEffectTo(effect.GameplayEffect,effect.TargetAsc,effect.SourceAsc);
+            //
+            // if(queue.Count>0) GasQueueCenter.ClearEffectsWaitingForApplication();
         }
 
         [BurstCompile]

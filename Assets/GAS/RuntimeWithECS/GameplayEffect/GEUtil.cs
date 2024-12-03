@@ -42,11 +42,10 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         {
             _entityManager.AddComponent<ComInApplicationProgress>(gameplayEffect);
             _entityManager.AddComponent<ComInUsage>(gameplayEffect);
-            _entityManager.AddComponent<NeedCheckEffects>(target);
+            _entityManager.AddComponent<ComValidEffect>(gameplayEffect);
             var comInUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
             comInUsage.Source = source;
             comInUsage.Target = target;
-            _entityManager.SetComponentEnabled<ComInUsage>(gameplayEffect, true);
             _entityManager.SetComponentData(gameplayEffect, comInUsage);
 
             var geBuffers = GameplayEffectUtils.GameplayEffectsOf(target);
@@ -158,8 +157,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void EffectApply(this Entity gameplayEffect)
         {
-            if (_entityManager.IsComponentEnabled<ComInUsage>(gameplayEffect)) return;
-            _entityManager.SetComponentEnabled<ComInUsage>(gameplayEffect,true);
+            if (_entityManager.HasComponent<ComValidEffect>(gameplayEffect)) return;
+            _entityManager.AddComponent<ComValidEffect>(gameplayEffect);
             
             // 校验是否可激活
             var owner = _entityManager.GetComponentData<ComInUsage>(gameplayEffect).Target;

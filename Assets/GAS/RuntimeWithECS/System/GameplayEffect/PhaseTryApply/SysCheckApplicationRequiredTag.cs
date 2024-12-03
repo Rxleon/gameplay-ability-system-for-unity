@@ -59,7 +59,6 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                     {
                         ecb.RemoveComponent<ComValidEffect>(ge);
                         ecb.AddComponent<ComDestroy>(ge);
-                        SystemAPI.SetComponentEnabled<ComInUsage>(ge, false);
                         break;
                     }
 

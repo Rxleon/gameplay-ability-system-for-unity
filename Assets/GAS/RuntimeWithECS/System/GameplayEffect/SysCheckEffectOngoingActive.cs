@@ -20,55 +20,55 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
-
-            var tagMap = SystemAPI.GetSingleton<SingletonGameplayTagMap>();
-            foreach (var (gameplayEffectBuffs, _, asc) in SystemAPI
-                         .Query<DynamicBuffer<GameplayEffectBufferElement>, RefRO<NeedCheckEffects>>()
-                         .WithEntityAccess())
-            {
-                var fixedTags = SystemAPI.GetBuffer<BuffElemFixedTag>(asc);
-                var tempTags = SystemAPI.GetBuffer<BuffElemTemporaryTag>(asc);
-
-                foreach (var geElement in gameplayEffectBuffs)
-                {
-                    var geEntity = geElement.GameplayEffect;
-
-                    // 过滤已经不合法的GE
-                    if (!SystemAPI.IsComponentEnabled<ComInUsage>(geEntity)) continue;
-                    // 过滤Instant GE
-                    if (!SystemAPI.HasComponent<ComDuration>(geEntity)) continue;
-                    
-                    var duration = SystemAPI.GetComponentRW<ComDuration>(geEntity);
-                    var oldActive = duration.ValueRO.active;
-                    
-                    var newActive = true;
-                    if (SystemAPI.HasComponent<ComOngoingRequiredTags>(geEntity))
-                    {
-                        var ongoingRequiredTags = SystemAPI.GetComponentRO<ComOngoingRequiredTags>(geEntity);
-                        newActive =
-                            IsOngoingRequiredTagsValid(ongoingRequiredTags.ValueRO.tags, fixedTags, tempTags, tagMap);
-                    }
-
-                    // 激活状态发生变化
-                    if (oldActive != newActive)
-                    {
-                        duration.ValueRW.active = newActive;
-
-                        // 挂在需要激活/失活的标签组件
-                        if (newActive)
-                            ecb.AddComponent<ComNeedActivate>(geEntity);
-                        else
-                            ecb.AddComponent<ComNeedDeactivate>(geEntity);
-                    }
-                }
-                
-                //  完成后，移除 NeedCheckEffects
-                ecb.RemoveComponent<NeedCheckEffects>(asc);
-            }
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
+            // var ecb = new EntityCommandBuffer(Allocator.Temp);
+            //
+            // var tagMap = SystemAPI.GetSingleton<SingletonGameplayTagMap>();
+            // foreach (var (gameplayEffectBuffs, _, asc) in SystemAPI
+            //              .Query<DynamicBuffer<GameplayEffectBufferElement>, RefRO<NeedCheckEffects>>()
+            //              .WithEntityAccess())
+            // {
+            //     var fixedTags = SystemAPI.GetBuffer<BuffElemFixedTag>(asc);
+            //     var tempTags = SystemAPI.GetBuffer<BuffElemTemporaryTag>(asc);
+            //
+            //     foreach (var geElement in gameplayEffectBuffs)
+            //     {
+            //         var geEntity = geElement.GameplayEffect;
+            //
+            //         // 过滤已经不合法的GE
+            //         if (!SystemAPI.IsComponentEnabled<ComInUsage>(geEntity)) continue;
+            //         // 过滤Instant GE
+            //         if (!SystemAPI.HasComponent<ComDuration>(geEntity)) continue;
+            //         
+            //         var duration = SystemAPI.GetComponentRW<ComDuration>(geEntity);
+            //         var oldActive = duration.ValueRO.active;
+            //         
+            //         var newActive = true;
+            //         if (SystemAPI.HasComponent<ComOngoingRequiredTags>(geEntity))
+            //         {
+            //             var ongoingRequiredTags = SystemAPI.GetComponentRO<ComOngoingRequiredTags>(geEntity);
+            //             newActive =
+            //                 IsOngoingRequiredTagsValid(ongoingRequiredTags.ValueRO.tags, fixedTags, tempTags, tagMap);
+            //         }
+            //
+            //         // 激活状态发生变化
+            //         if (oldActive != newActive)
+            //         {
+            //             duration.ValueRW.active = newActive;
+            //
+            //             // 挂在需要激活/失活的标签组件
+            //             if (newActive)
+            //                 ecb.AddComponent<ComNeedActivate>(geEntity);
+            //             else
+            //                 ecb.AddComponent<ComNeedDeactivate>(geEntity);
+            //         }
+            //     }
+            //     
+            //     //  完成后，移除 NeedCheckEffects
+            //     ecb.RemoveComponent<NeedCheckEffects>(asc);
+            // }
+            //
+            // ecb.Playback(state.EntityManager);
+            // ecb.Dispose();
         }
 
         [BurstCompile]
