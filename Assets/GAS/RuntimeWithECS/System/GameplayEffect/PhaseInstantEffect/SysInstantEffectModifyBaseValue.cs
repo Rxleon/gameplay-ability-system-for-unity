@@ -28,14 +28,10 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var aspect in SystemAPI.Query<AspModifyBaseValue>())
             {
                 aspect.ModifyBaseValue();
-                ecb.RemoveComponent<ComValidEffect>(aspect.self);
             }
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
         }
 
         [BurstCompile]

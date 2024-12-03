@@ -8,6 +8,7 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
 {
     [UpdateInGroup(typeof(SysGroupApplicationEnd))]
+    [UpdateAfter(typeof(SysRemoveApplicationProgressTag))]
     public partial struct SysDestroyEffects : ISystem
     {
         [BurstCompile]

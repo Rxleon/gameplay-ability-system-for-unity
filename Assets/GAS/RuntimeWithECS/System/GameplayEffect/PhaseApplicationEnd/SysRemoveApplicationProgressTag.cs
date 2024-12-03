@@ -23,6 +23,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
             foreach (var (_,ge) in SystemAPI.Query<RefRO<ComInApplicationProgress>>().WithEntityAccess())
             {
                 ecb.RemoveComponent<ComInApplicationProgress>(ge);
+                if(SystemAPI.HasComponent<ComValidEffect>(ge))
+                    ecb.RemoveComponent<ComValidEffect>(ge);
             }
             
             ecb.Playback(state.EntityManager);
