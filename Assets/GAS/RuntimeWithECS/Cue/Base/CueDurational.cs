@@ -21,5 +21,9 @@
         public virtual void OnTick()
         {
         }
+
+        protected CueDurational(NewGameplayCueParametersBase p) : base(p)
+        {
+        }
     }
 }

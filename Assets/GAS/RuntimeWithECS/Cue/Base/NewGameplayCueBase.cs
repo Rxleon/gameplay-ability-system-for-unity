@@ -66,5 +66,11 @@ namespace GAS.RuntimeWithECS.Cue
 
             return true;
         }
+
+        protected NewGameplayCueParametersBase _p;
+        public NewGameplayCueBase(NewGameplayCueParametersBase p)
+        {
+            _p = p;
+        }
     }
 }

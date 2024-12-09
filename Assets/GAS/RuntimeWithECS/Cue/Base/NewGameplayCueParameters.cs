@@ -13,9 +13,5 @@ namespace GAS.RuntimeWithECS.Cue
     {
         public CueSourceType SourceType;
         public Entity entity;
-
-        public float commonFloat;
-        public int commonInt;
-        public string commonString;
     }
 }
