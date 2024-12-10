@@ -22,6 +22,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
             {
                 entities[i] = GASManager.EntityManager.CreateEntity();
                 GASManager.EntityManager.AddComponent<ComInstantCue>(entities[i]);
+                cues[i].SetSourceEntity(ge);
                 GASManager.EntityManager.SetComponentData(entities[i],new ComInstantCue(cues[i]));
             }
             _entityManager.AddComponentData(ge, new ComCueOnExecution
