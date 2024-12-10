@@ -2,6 +2,7 @@
 using GAS.General;
 using GAS.Runtime;
 using Sirenix.OdinInspector;
+using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.Cue
 {
@@ -71,6 +72,16 @@ namespace GAS.RuntimeWithECS.Cue
         public NewGameplayCueBase(NewGameplayCueParametersBase p)
         {
             _p = p;
+        }
+        
+        public void SetSourceEntity(Entity e)
+        {
+            _p.entity = e;
+        }
+        
+        public void SetSourceType(CueSourceType sourceType)
+        {
+            _p.SourceType = sourceType;
         }
     }
 }

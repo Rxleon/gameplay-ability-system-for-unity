@@ -2,6 +2,7 @@ using System;
 using GAS.ECS_TEST_RUNTIME_GEN_LIB;
 using GAS.Runtime;
 using GAS.RuntimeWithECS.Core;
+using GAS.RuntimeWithECS.Cue;
 using GAS.RuntimeWithECS.GameplayEffect;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.Modifier;
@@ -34,7 +35,11 @@ namespace TestUnit_ForGASECS
                         floatParams = new []{0.5f,0},
                     }
                 }
-            }}
+            }},
+            new ConfCueOnExecution()
+            {
+                cues = new CueInstant[]{ new CueLog(new CueLogParameters(){Message = "普通攻击",SourceType = CueSourceType.GameplayEffect})} 
+            }
         };
         
         /// <summary>

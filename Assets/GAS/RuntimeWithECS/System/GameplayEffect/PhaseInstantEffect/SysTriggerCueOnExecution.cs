@@ -1,4 +1,5 @@
-﻿using GAS.RuntimeWithECS.GameplayEffect.Component;
+﻿using GAS.RuntimeWithECS.Cue.Component;
+using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.System.SystemGroup;
 using Unity.Burst;
 using Unity.Entities;
@@ -18,12 +19,12 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             state.RequireForUpdate<ComCueOnExecution>();
         }
 
-        [BurstCompile]
+        //[BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             foreach (var aspect in SystemAPI.Query<AspCueOnExecution>())
             {
-                aspect.Trigger();
+                aspect.Trigger(state.EntityManager);
             }
         }
 
@@ -42,8 +43,13 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         private readonly RefRO<ComInApplicationProgress> _inApplicationProgress;
         private readonly RefRO<ComCueOnExecution> _cueOnExecution;
 
-        public void Trigger()
+        public void Trigger(EntityManager entityManager)
         {
+            foreach (var entity in _cueOnExecution.ValueRO.cues)
+            {
+                var cue = entityManager.GetComponentData<ComInstantCue>(entity);
+                cue.cue.TryTrigger();
+            }
         }
     }
 }
