@@ -276,7 +276,8 @@ namespace GAS.Runtime
         private void GetStackingEffectSpecByData(GameplayEffect effect, out GameplayEffectSpec spec)
         {
             foreach (var gameplayEffectSpec in _gameplayEffectSpecs)
-                if (gameplayEffectSpec.GameplayEffect.StackEqual(effect))
+                if (gameplayEffectSpec.IsValid &&
+                    gameplayEffectSpec.GameplayEffect.StackEqual(effect))
                 {
                     spec = gameplayEffectSpec;
                     return;
@@ -289,7 +290,8 @@ namespace GAS.Runtime
             out GameplayEffectSpec spec)
         {
             foreach (var gameplayEffectSpec in _gameplayEffectSpecs)
-                if (gameplayEffectSpec.Source == source &&
+                if (gameplayEffectSpec.IsValid &&
+                    gameplayEffectSpec.Source == source &&
                     gameplayEffectSpec.GameplayEffect.StackEqual(effect))
                 {
                     spec = gameplayEffectSpec;
