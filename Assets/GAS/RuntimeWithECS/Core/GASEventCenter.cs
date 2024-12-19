@@ -12,6 +12,8 @@ namespace GAS.RuntimeWithECS.Core
             _onBaseValueChangeBefore.Clear();
             _onBaseValueChangeAfter.Clear();
             _onCurrentValueChangeAfter.Clear();
+            // GameplayEffect 事件
+            
         }
 
         #region Attribute 事件
@@ -127,6 +129,33 @@ namespace GAS.RuntimeWithECS.Core
 
             if (dictionary.TryGetValue(Tuple.Create(attrSetCode, attrCode), out var action))
                 action?.Invoke(oldValue, newValue);
+        }
+
+        #endregion
+
+        #region GameplayEffect 事件
+        
+        private static readonly Dictionary<Entity, Action> _onGameplayEffectContainerIsDirty = new();
+
+        public static void RegisterOnGameplayEffectContainerIsDirty(Entity entity, Action action)
+        {
+            _onGameplayEffectContainerIsDirty.TryAdd(entity, null);
+            _onGameplayEffectContainerIsDirty[entity] += action;
+        }
+
+        public static void UnRegisterOnGameplayEffectContainerIsDirty(Entity entity, Action action)
+        {
+            if (!_onGameplayEffectContainerIsDirty.ContainsKey(entity)) return;
+
+            _onGameplayEffectContainerIsDirty[entity] -= action;
+            var delegateList = _onGameplayEffectContainerIsDirty[entity]?.GetInvocationList();
+            if (delegateList is { Length: 0 }) _onGameplayEffectContainerIsDirty.Remove(entity);
+        }
+
+        public static void InvokeOnGameplayEffectContainerIsDirty(Entity entity)
+        {
+            if (_onGameplayEffectContainerIsDirty.TryGetValue(entity, out var action)) 
+                action?.Invoke();
         }
 
         #endregion
