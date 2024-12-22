@@ -27,7 +27,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
             foreach (var (inUsage,_,_,ge) in 
-                     SystemAPI.Query<RefRW<ComInUsage>,RefRO<ComInApplicationProgress>,RefRO<ComValidEffect>>().WithEntityAccess())
+                     SystemAPI.Query<RefRW<ComInUsage>,RefRO<ComInApplicationProgress>,RefRO<ComValidEffect>>().WithNone<ComDuration>().WithEntityAccess())
             {
                 // TODO 初始化
             }

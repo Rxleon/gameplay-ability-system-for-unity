@@ -195,7 +195,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
             return attrBuffer;
         }
 
-        public DynamicBuffer<GameplayEffectBufferElement> GameplayEffects()
+        public DynamicBuffer<BuffEleGameplayEffect> GameplayEffects()
         {
             return _gameplayEffectController.CurrentGameplayEffects;
         }

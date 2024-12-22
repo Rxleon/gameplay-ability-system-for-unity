@@ -1,8 +1,11 @@
-﻿using Unity.Burst;
+﻿using GAS.RuntimeWithECS.System.SystemGroup;
+using Unity.Burst;
 using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
 {
+    [UpdateInGroup(typeof(SysGroupDurationalEffect))]
+    [UpdateAfter(typeof(SysInitDuartionalEffect))]
     public partial struct SysActivateEffect : ISystem
     {
         [BurstCompile]

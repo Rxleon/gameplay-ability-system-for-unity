@@ -11,7 +11,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<GameplayEffectBufferElement>();
+            state.RequireForUpdate<BuffEleGameplayEffect>();
         }
 
         [BurstCompile]

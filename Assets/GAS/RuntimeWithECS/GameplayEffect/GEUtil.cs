@@ -7,6 +7,7 @@ using GAS.RuntimeWithECS.Tag;
 using GAS.RuntimeWithECS.Tag.Component;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine.Profiling;
 
 namespace GAS.RuntimeWithECS.GameplayEffect
 {
@@ -43,13 +44,14 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             _entityManager.AddComponent<ComInApplicationProgress>(gameplayEffect);
             _entityManager.AddComponent<ComInUsage>(gameplayEffect);
             _entityManager.AddComponent<ComValidEffect>(gameplayEffect);
+
             var comInUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
             comInUsage.Source = source;
             comInUsage.Target = target;
             _entityManager.SetComponentData(gameplayEffect, comInUsage);
-
+            
             var geBuffers = GameplayEffectUtils.GameplayEffectsOf(target);
-            geBuffers.Add(new GameplayEffectBufferElement { GameplayEffect = gameplayEffect });
+            geBuffers.Add(new BuffEleGameplayEffect { GameplayEffect = gameplayEffect });
         }
 
         /// <summary>
