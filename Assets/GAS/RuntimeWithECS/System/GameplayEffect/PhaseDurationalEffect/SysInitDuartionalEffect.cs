@@ -1,4 +1,5 @@
-﻿using GAS.RuntimeWithECS.GameplayEffect.Component;
+﻿using GAS.RuntimeWithECS.AbilitySystemCell.Component;
+using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.System.SystemGroup;
 using Unity.Burst;
 using Unity.Collections;
@@ -12,9 +13,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInUsage>();
-            state.RequireForUpdate<ComInApplicationProgress>();
-            state.RequireForUpdate<ComValidEffect>();
+            state.RequireForUpdate<CInUsage>();
+            state.RequireForUpdate<CInApplicationProgress>();
+            state.RequireForUpdate<CValidEffect>();
             state.RequireForUpdate<ComDuration>();
         }
 
@@ -24,7 +25,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
             foreach (var (inUsage,_,_,_,ge) in 
-                     SystemAPI.Query<RefRW<ComInUsage>,RefRO<ComInApplicationProgress>,RefRO<ComValidEffect>,RefRO<ComDuration>>().WithEntityAccess())
+                     SystemAPI.Query<RefRW<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>,RefRO<ComDuration>>().WithEntityAccess())
             {
                 var owner = inUsage.ValueRO.Target;
                 // TODO 初始化，设置Level
@@ -32,6 +33,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                 // 加入GE Container列表
                 var geContainer = SystemAPI.GetBuffer<BuffEleGameplayEffect>(owner);
                 geContainer.Add(new BuffEleGameplayEffect { GameplayEffect = ge });
+                
+                ecb.AddComponent<EffectContainerDirty>(owner);
             }
             
             ecb.Playback(state.EntityManager);

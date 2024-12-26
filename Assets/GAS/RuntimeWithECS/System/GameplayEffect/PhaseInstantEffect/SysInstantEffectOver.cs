@@ -14,7 +14,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInUsage>();
+            state.RequireForUpdate<CInUsage>();
         }
 
         [BurstCompile]
@@ -22,7 +22,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (_, ge) in SystemAPI
-                         .Query<RefRW<ComInUsage>>()
+                         .Query<RefRW<CInUsage>>()
                          .WithNone<ComDuration>()
                          .WithEntityAccess())
             {

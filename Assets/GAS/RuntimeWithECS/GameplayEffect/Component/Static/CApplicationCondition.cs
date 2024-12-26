@@ -3,18 +3,18 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComApplicationRequiredTags : IComponentData
+    public struct CApplicationCondition : IComponentData
     {
-        public NativeArray<int> tags;
+        public NativeArray<int> conditions;
     }
     
-    public sealed class ConfApplicationRequiredTags:GameplayEffectComponentConfig
+    public sealed class ConfApplicationCondition:GameplayEffectComponentConfig
     {
         public int[] tags;
         
         public override void LoadToGameplayEffectEntity(Entity ge)
         {
-            _entityManager.AddComponentData(ge, new ComApplicationRequiredTags
+            _entityManager.AddComponentData(ge, new CAssetTags
             {
                 tags = new NativeArray<int>(tags, Allocator.Persistent)
             });

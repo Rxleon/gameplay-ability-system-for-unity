@@ -21,9 +21,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BuffEleModifier>();
-            state.RequireForUpdate<ComInApplicationProgress>();
-            state.RequireForUpdate<ComValidEffect>();
-            state.RequireForUpdate<ComInUsage>();
+            state.RequireForUpdate<CInApplicationProgress>();
+            state.RequireForUpdate<CValidEffect>();
+            state.RequireForUpdate<CInUsage>();
         }
 
         public void OnUpdate(ref SystemState state)

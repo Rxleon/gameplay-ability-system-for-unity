@@ -16,9 +16,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<ComRemoveEffectWithTags>();
-            state.RequireForUpdate<ComInApplicationProgress>();
-            state.RequireForUpdate<ComValidEffect>();
-            state.RequireForUpdate<ComInUsage>();
+            state.RequireForUpdate<CInApplicationProgress>();
+            state.RequireForUpdate<CValidEffect>();
+            state.RequireForUpdate<CInUsage>();
         }
 
         // [BurstCompile]
@@ -27,7 +27,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
             foreach (var (removeEffectWithTags,inUsage,_,_) in 
-                     SystemAPI.Query<RefRO<ComRemoveEffectWithTags>,RefRO<ComInUsage>,RefRO<ComInApplicationProgress>,RefRO<ComValidEffect>>())
+                     SystemAPI.Query<RefRO<ComRemoveEffectWithTags>,RefRO<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>>())
             {
                 var tags = removeEffectWithTags.ValueRO.tags;
                 if (tags.Length == 0) continue;

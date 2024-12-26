@@ -41,11 +41,11 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void ApplyGameplayEffectTo(Entity gameplayEffect, Entity target, Entity source)
         {
-            _entityManager.AddComponent<ComInApplicationProgress>(gameplayEffect);
-            _entityManager.AddComponent<ComInUsage>(gameplayEffect);
-            _entityManager.AddComponent<ComValidEffect>(gameplayEffect);
+            _entityManager.AddComponent<CInApplicationProgress>(gameplayEffect);
+            _entityManager.AddComponent<CInUsage>(gameplayEffect);
+            _entityManager.AddComponent<CValidEffect>(gameplayEffect);
 
-            var comInUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
+            var comInUsage = _entityManager.GetComponentData<CInUsage>(gameplayEffect);
             comInUsage.Source = source;
             comInUsage.Target = target;
             _entityManager.SetComponentData(gameplayEffect, comInUsage);
@@ -62,8 +62,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         /// <returns></returns>
         public static bool CheckApplicationRequiredTags(this Entity gameplayEffect, Entity asc)
         {
-            if (!_entityManager.HasComponent<ComApplicationRequiredTags>(gameplayEffect)) return true;
-            var requiredTags = _entityManager.GetComponentData<ComApplicationRequiredTags>(gameplayEffect);
+            if (!_entityManager.HasComponent<CApplicationRequiredTags>(gameplayEffect)) return true;
+            var requiredTags = _entityManager.GetComponentData<CApplicationRequiredTags>(gameplayEffect);
             return asc.CheckAscHasAllTags(requiredTags.tags);
         }
 
@@ -96,10 +96,10 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void InitGameplayEffect(this Entity gameplayEffect, Entity source, Entity target, int level)
         {
-            if (!_entityManager.HasComponent<ComInUsage>(gameplayEffect)) return;
+            if (!_entityManager.HasComponent<CInUsage>(gameplayEffect)) return;
 
             _entityManager.SetComponentData(gameplayEffect,
-                new ComInUsage { Source = source, Target = target, Level = level });
+                new CInUsage { Source = source, Target = target, Level = level });
 
             if (_entityManager.HasComponent<ComDuration>(gameplayEffect))
                 if (_entityManager.HasComponent<ComPeriod>(gameplayEffect))
@@ -116,9 +116,9 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void TriggerOnExecute(this Entity gameplayEffect)
         {
-            if (!_entityManager.HasComponent<ComInUsage>(gameplayEffect)) return;
+            if (!_entityManager.HasComponent<CInUsage>(gameplayEffect)) return;
 
-            var inUsage = _entityManager.GetComponentData<ComInUsage>(gameplayEffect);
+            var inUsage = _entityManager.GetComponentData<CInUsage>(gameplayEffect);
             var owner = inUsage.Target;
             // 1.移除GameplayEffectWithAnyTags
             owner.RemoveGameplayEffectWithAnyTags(gameplayEffect);
@@ -134,9 +134,9 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         public static bool CheckEffectHasAnyTags(this Entity gameplayEffect, NativeArray<int> tags)
         {
             // 1.判断AssetTags
-            if (_entityManager.HasComponent<ComAssetTags>(gameplayEffect))
+            if (_entityManager.HasComponent<CAssetTags>(gameplayEffect))
             {
-                var assetTags = _entityManager.GetComponentData<ComAssetTags>(gameplayEffect).tags;
+                var assetTags = _entityManager.GetComponentData<CAssetTags>(gameplayEffect).tags;
 
                 foreach (var assetTag in assetTags)
                 foreach (var tag in tags)
@@ -159,11 +159,11 @@ namespace GAS.RuntimeWithECS.GameplayEffect
 
         public static void EffectApply(this Entity gameplayEffect)
         {
-            if (_entityManager.HasComponent<ComValidEffect>(gameplayEffect)) return;
-            _entityManager.AddComponent<ComValidEffect>(gameplayEffect);
+            if (_entityManager.HasComponent<CValidEffect>(gameplayEffect)) return;
+            _entityManager.AddComponent<CValidEffect>(gameplayEffect);
             
             // 校验是否可激活
-            var owner = _entityManager.GetComponentData<ComInUsage>(gameplayEffect).Target;
+            var owner = _entityManager.GetComponentData<CInUsage>(gameplayEffect).Target;
             if (gameplayEffect.CheckOngoingRequiredTags(owner))
                 gameplayEffect.EffectActivate();
         }

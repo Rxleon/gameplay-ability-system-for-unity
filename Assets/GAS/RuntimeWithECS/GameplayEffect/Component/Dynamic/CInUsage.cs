@@ -5,7 +5,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
     /// <summary>
     /// 正在使用中的Component
     /// </summary>
-    public struct ComInUsage : IComponentData
+    public struct CInUsage : IComponentData
     {
         /// <summary>
         /// 施加目标

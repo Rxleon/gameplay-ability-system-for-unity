@@ -17,9 +17,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SingletonGameplayTagMap>();
-            state.RequireForUpdate<ComApplicationRequiredTags>();
-            state.RequireForUpdate<ComInUsage>();
-            state.RequireForUpdate<ComValidEffect>();
+            state.RequireForUpdate<CApplicationRequiredTags>();
+            state.RequireForUpdate<CInUsage>();
+            state.RequireForUpdate<CValidEffect>();
         }
 
         [BurstCompile]
@@ -29,7 +29,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (requiredTags, comInUsage, _,ge) in SystemAPI
-                         .Query<RefRO<ComApplicationRequiredTags>, RefRW<ComInUsage>,RefRO<ComValidEffect>>().WithEntityAccess())
+                         .Query<RefRO<CApplicationRequiredTags>, RefRW<CInUsage>,RefRO<CValidEffect>>().WithEntityAccess())
             {
                 var asc = comInUsage.ValueRO.Target;
                 var fixedTags = SystemAPI.GetBuffer<BuffElemFixedTag>(asc);
@@ -57,7 +57,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
                     if (!hasTag)
                     {
-                        ecb.RemoveComponent<ComValidEffect>(ge);
+                        ecb.RemoveComponent<CValidEffect>(ge);
                         ecb.AddComponent<ComDestroy>(ge);
                         break;
                     }

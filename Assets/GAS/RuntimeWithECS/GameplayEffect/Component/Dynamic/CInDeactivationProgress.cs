@@ -2,7 +2,7 @@
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComNeedDeactivate : IComponentData
+    public struct CInDeactivationProgress : IComponentData
     {
         
     }

@@ -13,19 +13,19 @@ namespace GAS.RuntimeWithECS.Core
             _onBaseValueChangeAfter.Clear();
             _onCurrentValueChangeAfter.Clear();
             // GameplayEffect 事件
-            
+            _onGameplayEffectContainerIsDirty.Clear();
         }
 
         #region Attribute 事件
 
-        private static readonly Dictionary<Entity, Dictionary<Tuple<int, int>, Func<float,float>>>
+        private static readonly Dictionary<Entity, Dictionary<Tuple<int, int>, Func<float, float>>>
             _onBaseValueChangeBefore = new();
 
         public static void SetOnBaseValueChangeBefore(Entity entity, int attrSetCode, int attrCode,
-            Func<float,float> action)
+            Func<float, float> action)
         {
             if (!_onBaseValueChangeBefore.ContainsKey(entity))
-                _onBaseValueChangeBefore.Add(entity, new Dictionary<Tuple<int, int>, Func<float,float>>());
+                _onBaseValueChangeBefore.Add(entity, new Dictionary<Tuple<int, int>, Func<float, float>>());
 
             _onBaseValueChangeBefore[entity][Tuple.Create(attrSetCode, attrCode)] = action;
         }
@@ -48,7 +48,6 @@ namespace GAS.RuntimeWithECS.Core
 
             return value;
         }
-
 
 
         private static readonly Dictionary<Entity, Dictionary<Tuple<int, int>, Action<float, float>>>
@@ -134,27 +133,29 @@ namespace GAS.RuntimeWithECS.Core
         #endregion
 
         #region GameplayEffect 事件
-        
+
         private static readonly Dictionary<Entity, Action> _onGameplayEffectContainerIsDirty = new();
 
         public static void RegisterOnGameplayEffectContainerIsDirty(Entity entity, Action action)
         {
-            _onGameplayEffectContainerIsDirty.TryAdd(entity, null);
-            _onGameplayEffectContainerIsDirty[entity] += action;
+            if (!_onGameplayEffectContainerIsDirty.TryAdd(entity, action))
+                _onGameplayEffectContainerIsDirty[entity] =
+                    (Action)Delegate.Combine(_onGameplayEffectContainerIsDirty[entity], action);
         }
 
         public static void UnRegisterOnGameplayEffectContainerIsDirty(Entity entity, Action action)
         {
-            if (!_onGameplayEffectContainerIsDirty.ContainsKey(entity)) return;
-
-            _onGameplayEffectContainerIsDirty[entity] -= action;
-            var delegateList = _onGameplayEffectContainerIsDirty[entity]?.GetInvocationList();
-            if (delegateList is { Length: 0 }) _onGameplayEffectContainerIsDirty.Remove(entity);
+            if (!_onGameplayEffectContainerIsDirty.TryGetValue(entity, out var existingAction)) return;
+            var newAction = (Action)Delegate.Remove(existingAction, action);
+            if (newAction == null)
+                _onGameplayEffectContainerIsDirty.Remove(entity);
+            else
+                _onGameplayEffectContainerIsDirty[entity] = newAction;
         }
 
         public static void InvokeOnGameplayEffectContainerIsDirty(Entity entity)
         {
-            if (_onGameplayEffectContainerIsDirty.TryGetValue(entity, out var action)) 
+            if (_onGameplayEffectContainerIsDirty.TryGetValue(entity, out var action))
                 action?.Invoke();
         }
 

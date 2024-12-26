@@ -12,7 +12,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInApplicationProgress>();
+            state.RequireForUpdate<CInApplicationProgress>();
         }
 
         [BurstCompile]
@@ -20,11 +20,11 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
-            foreach (var (_,ge) in SystemAPI.Query<RefRO<ComInApplicationProgress>>().WithEntityAccess())
+            foreach (var (_,ge) in SystemAPI.Query<RefRO<CInApplicationProgress>>().WithEntityAccess())
             {
-                ecb.RemoveComponent<ComInApplicationProgress>(ge);
-                if(SystemAPI.HasComponent<ComValidEffect>(ge))
-                    ecb.RemoveComponent<ComValidEffect>(ge);
+                ecb.RemoveComponent<CInApplicationProgress>(ge);
+                if(SystemAPI.HasComponent<CValidEffect>(ge))
+                    ecb.RemoveComponent<CValidEffect>(ge);
             }
             
             ecb.Playback(state.EntityManager);

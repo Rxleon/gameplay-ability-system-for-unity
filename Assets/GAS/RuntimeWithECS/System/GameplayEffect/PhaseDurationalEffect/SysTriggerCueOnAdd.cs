@@ -13,10 +13,10 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInUsage>();
-            state.RequireForUpdate<ComInApplicationProgress>();
-            state.RequireForUpdate<ComValidEffect>();
-            state.RequireForUpdate<ComCueOnAdd>();
+            state.RequireForUpdate<CInUsage>();
+            state.RequireForUpdate<CInApplicationProgress>();
+            state.RequireForUpdate<CValidEffect>();
+            state.RequireForUpdate<CCueOnAdd>();
         }
 
         //[BurstCompile]
@@ -38,10 +38,10 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
     public readonly partial struct AspCueOnAdd : IAspect
     {
         public readonly Entity self;
-        private readonly RefRO<ComInUsage> _inUsage;
-        private readonly RefRO<ComValidEffect> _comValidEffect;
-        private readonly RefRO<ComInApplicationProgress> _inApplicationProgress;
-        private readonly RefRO<ComCueOnAdd> _cueOnAdd;
+        private readonly RefRO<CInUsage> _inUsage;
+        private readonly RefRO<CValidEffect> _comValidEffect;
+        private readonly RefRO<CInApplicationProgress> _inApplicationProgress;
+        private readonly RefRO<CCueOnAdd> _cueOnAdd;
 
         public void Trigger(EntityManager entityManager)
         {

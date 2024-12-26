@@ -16,7 +16,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComNeedDeactivate>();
+            state.RequireForUpdate<CInDeactivationProgress>();
         }
 
         [BurstCompile]

@@ -13,9 +13,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInApplicationProgress>();
-            state.RequireForUpdate<ComValidEffect>();
-            state.RequireForUpdate<ComInUsage>();
+            state.RequireForUpdate<CInApplicationProgress>();
+            state.RequireForUpdate<CValidEffect>();
+            state.RequireForUpdate<CInUsage>();
             state.RequireForUpdate<ComCueOnExecution>();
         }
 
@@ -38,9 +38,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
     public readonly partial struct AspCueOnExecution : IAspect
     {
         public readonly Entity self;
-        private readonly RefRO<ComInUsage> _inUsage;
-        private readonly RefRO<ComValidEffect> _comValidEffect;
-        private readonly RefRO<ComInApplicationProgress> _inApplicationProgress;
+        private readonly RefRO<CInUsage> _inUsage;
+        private readonly RefRO<CValidEffect> _comValidEffect;
+        private readonly RefRO<CInApplicationProgress> _inApplicationProgress;
         private readonly RefRO<ComCueOnExecution> _cueOnExecution;
 
         public void Trigger(EntityManager entityManager)

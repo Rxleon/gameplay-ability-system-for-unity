@@ -18,8 +18,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         {
             state.RequireForUpdate<SingletonGameplayTagMap>();
             state.RequireForUpdate<ComImmunityTags>();
-            state.RequireForUpdate<ComInUsage>();
-            state.RequireForUpdate<ComValidEffect>();
+            state.RequireForUpdate<CInUsage>();
+            state.RequireForUpdate<CValidEffect>();
         }
 
         //[BurstCompile]
@@ -29,7 +29,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (immunityTags, comInUsage, _,ge) in SystemAPI
-                         .Query<RefRO<ComImmunityTags>, RefRW<ComInUsage>,RefRO<ComValidEffect>>().WithEntityAccess())
+                         .Query<RefRO<ComImmunityTags>, RefRW<CInUsage>,RefRO<CValidEffect>>().WithEntityAccess())
             {
                 var asc = comInUsage.ValueRO.Target;
                 var fixedTags = SystemAPI.GetBuffer<BuffElemFixedTag>(asc);
@@ -57,7 +57,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
 
                     if (hasTag)
                     {
-                        ecb.RemoveComponent<ComValidEffect>(ge);
+                        ecb.RemoveComponent<CValidEffect>(ge);
                         ecb.AddComponent<ComDestroy>(ge);
                         
                         // TODO 触发免疫 Cue

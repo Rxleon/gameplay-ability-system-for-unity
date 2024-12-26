@@ -12,9 +12,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComInUsage>();
-            state.RequireForUpdate<ComValidEffect>();
-            state.RequireForUpdate<ComApplicationCondition>();
+            state.RequireForUpdate<CInUsage>();
+            state.RequireForUpdate<CValidEffect>();
+            state.RequireForUpdate<CApplicationCondition>();
         }
 
         [BurstCompile]
