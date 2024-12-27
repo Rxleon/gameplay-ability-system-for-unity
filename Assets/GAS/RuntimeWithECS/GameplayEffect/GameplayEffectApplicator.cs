@@ -35,7 +35,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             _entityManager.SetComponentData(gameplayEffect, new CInUsage { Source = source, Target = target });
             
             // 5. 根据ge类型处理
-            bool hasDuration = _entityManager.HasComponent<ComDuration>(gameplayEffect);
+            bool hasDuration = _entityManager.HasComponent<CDuration>(gameplayEffect);
             if (hasDuration)
             {
                 // Durational GE
@@ -66,13 +66,13 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         
         private static Entity ApplyInstantDurationEffect(Entity gameplayEffect,Entity source,Entity target,int level)
         {
-            bool isStacking = _entityManager.HasComponent<ComStacking>(gameplayEffect);
+            bool isStacking = _entityManager.HasComponent<CStacking>(gameplayEffect);
             // Check GE Stacking
             if (!isStacking)
                 return Operation_AddNewGameplayEffect(gameplayEffect,source,target ,level);
             
             
-            var stacking = _entityManager.GetComponentData<ComStacking>(gameplayEffect);
+            var stacking = _entityManager.GetComponentData<CStacking>(gameplayEffect);
             // TODO
             // 处理GE堆叠
             // 基于Target类型GE堆叠

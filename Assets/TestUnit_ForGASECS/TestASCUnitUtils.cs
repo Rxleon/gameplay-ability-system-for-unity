@@ -170,8 +170,8 @@ namespace TestUnit_ForGASECS
 
         public void SetDuration(Entity geEntity)
         {
-            var has = GasEntityManager.HasComponent<ComDuration>(geEntity);
-            var dur = has ? GasEntityManager.GetComponentData<ComDuration>(geEntity) : new ComDuration();
+            var has = GasEntityManager.HasComponent<CDuration>(geEntity);
+            var dur = has ? GasEntityManager.GetComponentData<CDuration>(geEntity) : new CDuration();
             duration = has ? dur.duration : 0;
             timeUnit = has ? dur.timeUnit : TimeUnit.Frame;
             active = has && dur.active;
@@ -179,8 +179,8 @@ namespace TestUnit_ForGASECS
 
         public void SetPeriod(Entity geEntity)
         {
-            var has = GasEntityManager.HasComponent<ComPeriod>(geEntity);
-            var p = has ? GasEntityManager.GetComponentData<ComPeriod>(geEntity) : new ComPeriod();
+            var has = GasEntityManager.HasComponent<CPeriod>(geEntity);
+            var p = has ? GasEntityManager.GetComponentData<CPeriod>(geEntity) : new CPeriod();
             var periodGEs = has ? new string[p.GameplayEffects.Length] : null;
             if (has)
                 for (var j = 0; j < p.GameplayEffects.Length; j++)

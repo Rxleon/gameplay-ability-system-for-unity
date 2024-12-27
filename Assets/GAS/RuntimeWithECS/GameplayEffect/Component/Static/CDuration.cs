@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComDuration : IComponentData
+    public struct CDuration : IComponentData
     {
         /// <summary>
         /// 持续时间。 小于等于0 表示无限
@@ -59,7 +59,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
 
         public override void LoadToGameplayEffectEntity(Entity ge)
         {
-            _entityManager.AddComponentData(ge, new ComDuration
+            _entityManager.AddComponentData(ge, new CDuration
             {
                 duration = duration,
                 timeUnit = timeUnit,

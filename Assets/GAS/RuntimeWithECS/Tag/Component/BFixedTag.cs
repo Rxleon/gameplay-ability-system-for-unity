@@ -2,7 +2,7 @@
 
 namespace GAS.RuntimeWithECS.Tag.Component
 {
-    public struct BuffElemFixedTag : IBufferElementData
+    public struct BFixedTag : IBufferElementData
     {
         public int tag;
     }

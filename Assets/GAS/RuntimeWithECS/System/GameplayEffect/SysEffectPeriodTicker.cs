@@ -12,7 +12,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComPeriod>();
+            state.RequireForUpdate<CPeriod>();
         }
 
         //[BurstCompile]

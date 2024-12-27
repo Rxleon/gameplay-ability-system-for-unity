@@ -19,9 +19,9 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
 
         public static void RemoveGameplayEffectWithAnyTags(this Entity asc, Entity gameplayEffect)
         {
-            if (!_entityManager.HasComponent<ComRemoveEffectWithTags>(gameplayEffect)) return;
+            if (!_entityManager.HasComponent<CRemoveEffectWithTags>(gameplayEffect)) return;
 
-            var comRemoveEffectWithTags = _entityManager.GetComponentData<ComRemoveEffectWithTags>(gameplayEffect);
+            var comRemoveEffectWithTags = _entityManager.GetComponentData<CRemoveEffectWithTags>(gameplayEffect);
             var removeEffectWithTags = comRemoveEffectWithTags.tags;
             if (removeEffectWithTags.Length == 0) return;
 
@@ -33,9 +33,9 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                 if (!hasRemoveTag) continue;
                 geBuff.RemoveAt(i);
                 // 含有子实例的组件也要清理
-                if (_entityManager.HasComponent<ComPeriod>(ge))
+                if (_entityManager.HasComponent<CPeriod>(ge))
                 {
-                    var period = _entityManager.GetComponentData<ComPeriod>(ge);
+                    var period = _entityManager.GetComponentData<CPeriod>(ge);
                     foreach (var sonGe in period.GameplayEffects)
                         _entityManager.DestroyEntity(sonGe);
                 }
@@ -107,8 +107,8 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
 
         public static bool CheckAscHasAllTags(this Entity asc, NativeArray<int> tags)
         {
-            var fixedTags = _entityManager.GetBuffer<BuffElemFixedTag>(asc);
-            var tempTags = _entityManager.GetBuffer<BuffElemTemporaryTag>(asc);
+            var fixedTags = _entityManager.GetBuffer<BFixedTag>(asc);
+            var tempTags = _entityManager.GetBuffer<BTemporaryTag>(asc);
 
             foreach (var tag in tags)
             {
@@ -137,8 +137,8 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
 
         public static bool CheckAscHasAnyTags(this Entity asc, NativeArray<int> tags)
         {
-            var fixedTags = _entityManager.GetBuffer<BuffElemFixedTag>(asc);
-            var tempTags = _entityManager.GetBuffer<BuffElemTemporaryTag>(asc);
+            var fixedTags = _entityManager.GetBuffer<BFixedTag>(asc);
+            var tempTags = _entityManager.GetBuffer<BTemporaryTag>(asc);
 
             foreach (var tag in tags)
             {

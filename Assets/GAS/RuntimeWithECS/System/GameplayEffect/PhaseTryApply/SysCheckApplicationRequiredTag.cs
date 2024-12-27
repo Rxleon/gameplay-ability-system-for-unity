@@ -32,8 +32,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                          .Query<RefRO<CApplicationRequiredTags>, RefRW<CInUsage>,RefRO<CValidEffect>>().WithEntityAccess())
             {
                 var asc = comInUsage.ValueRO.Target;
-                var fixedTags = SystemAPI.GetBuffer<BuffElemFixedTag>(asc);
-                var tempTags = SystemAPI.GetBuffer<BuffElemTemporaryTag>(asc);
+                var fixedTags = SystemAPI.GetBuffer<BFixedTag>(asc);
+                var tempTags = SystemAPI.GetBuffer<BTemporaryTag>(asc);
 
                 foreach (var tag in requiredTags.ValueRO.tags)
                 {

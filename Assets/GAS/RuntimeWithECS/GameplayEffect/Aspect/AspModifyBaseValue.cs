@@ -20,7 +20,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Aspect
         public bool ModifyBaseValue()
         {
             // 排除掉Durational的GE类型
-            var isDurational = GASManager.EntityManager.HasComponent<ComDuration>(self);
+            var isDurational = GASManager.EntityManager.HasComponent<CDuration>(self);
             if (isDurational) return false;
 
             var asc = _inUsage.ValueRO.Target;

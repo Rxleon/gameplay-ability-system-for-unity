@@ -16,7 +16,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             state.RequireForUpdate<CInUsage>();
             state.RequireForUpdate<CInApplicationProgress>();
             state.RequireForUpdate<CValidEffect>();
-            state.RequireForUpdate<ComDuration>();
+            state.RequireForUpdate<CDuration>();
         }
 
         [BurstCompile]
@@ -25,7 +25,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
             foreach (var (inUsage,_,_,_,ge) in 
-                     SystemAPI.Query<RefRW<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>,RefRO<ComDuration>>().WithEntityAccess())
+                     SystemAPI.Query<RefRW<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>,RefRO<CDuration>>().WithEntityAccess())
             {
                 var owner = inUsage.ValueRO.Target;
                 // TODO 初始化，设置Level

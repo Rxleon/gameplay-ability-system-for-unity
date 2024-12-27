@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComPeriod : IComponentData
+    public struct CPeriod : IComponentData
     {
         public int Period;
         public bool ResetTimeCountWhenDeactivated;
@@ -28,7 +28,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
                 geEntities[i] = GEUtil.CreateGameplayEffectEntity(comConfigs);
             }
 
-            _entityManager.AddComponentData(ge, new ComPeriod
+            _entityManager.AddComponentData(ge, new CPeriod
             {
                 Period = Period,
                 GameplayEffects = geEntities,

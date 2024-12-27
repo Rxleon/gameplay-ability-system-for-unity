@@ -77,8 +77,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         }
 
         private bool IsOngoingRequiredTagsValid(NativeArray<int> ongoingRequiredTags,
-            DynamicBuffer<BuffElemFixedTag> fixedTags,
-            DynamicBuffer<BuffElemTemporaryTag> tempTags,
+            DynamicBuffer<BFixedTag> fixedTags,
+            DynamicBuffer<BTemporaryTag> tempTags,
             SingletonGameplayTagMap tagMap)
         {
             foreach (var tag in ongoingRequiredTags)

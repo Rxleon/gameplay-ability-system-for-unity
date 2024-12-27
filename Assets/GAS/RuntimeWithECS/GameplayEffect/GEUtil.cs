@@ -75,8 +75,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         /// <returns></returns>
         public static bool CheckOngoingRequiredTags(this Entity gameplayEffect, Entity asc)
         {
-            if (!_entityManager.HasComponent<ComOngoingRequiredTags>(gameplayEffect)) return true;
-            var requiredTags = _entityManager.GetComponentData<ComOngoingRequiredTags>(gameplayEffect);
+            if (!_entityManager.HasComponent<COngoingRequiredTags>(gameplayEffect)) return true;
+            var requiredTags = _entityManager.GetComponentData<COngoingRequiredTags>(gameplayEffect);
             return asc.CheckAscHasAllTags(requiredTags.tags);
 
         }
@@ -89,8 +89,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         /// <returns></returns>
         public static bool CheckImmunityTags(this Entity gameplayEffect, Entity asc)
         {
-            if (!_entityManager.HasComponent<ComImmunityTags>(gameplayEffect)) return false;
-            var immunityTags = _entityManager.GetComponentData<ComImmunityTags>(gameplayEffect);
+            if (!_entityManager.HasComponent<CImmunityTags>(gameplayEffect)) return false;
+            var immunityTags = _entityManager.GetComponentData<CImmunityTags>(gameplayEffect);
             return asc.CheckAscHasAnyTags(immunityTags.tags);
         }
 
@@ -101,10 +101,10 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             _entityManager.SetComponentData(gameplayEffect,
                 new CInUsage { Source = source, Target = target, Level = level });
 
-            if (_entityManager.HasComponent<ComDuration>(gameplayEffect))
-                if (_entityManager.HasComponent<ComPeriod>(gameplayEffect))
+            if (_entityManager.HasComponent<CDuration>(gameplayEffect))
+                if (_entityManager.HasComponent<CPeriod>(gameplayEffect))
                 {
-                    var period = _entityManager.GetComponentData<ComPeriod>(gameplayEffect);
+                    var period = _entityManager.GetComponentData<CPeriod>(gameplayEffect);
                     var periodGEs = period.GameplayEffects;
                     foreach (var ge in periodGEs)
                         ge.InitGameplayEffect(source, target, level);
@@ -145,9 +145,9 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             }
 
             //2.判断GrantedTags
-            if (_entityManager.HasComponent<ComGrantedTags>(gameplayEffect))
+            if (_entityManager.HasComponent<CGrantedTags>(gameplayEffect))
             {
-                var grantedTags = _entityManager.GetComponentData<ComGrantedTags>(gameplayEffect).tags;
+                var grantedTags = _entityManager.GetComponentData<CGrantedTags>(gameplayEffect).tags;
                 foreach (var grantedTag in grantedTags)
                 foreach (var tag in tags)
                     if (GameplayTagHub.HasTag(grantedTag, tag))
@@ -170,7 +170,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
         
         public static void EffectActivate(this Entity gameplayEffect)
         {
-            var comDuration = _entityManager.GetComponentData<ComDuration>(gameplayEffect);
+            var comDuration = _entityManager.GetComponentData<CDuration>(gameplayEffect);
             if (comDuration.active) return;
             comDuration.active = true;
             

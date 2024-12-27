@@ -10,8 +10,8 @@ namespace GAS.RuntimeWithECS.Tag
     {
         private readonly Entity _asc;
         private static EntityManager GasEntityManager => GASManager.EntityManager;
-        private DynamicBuffer<BuffElemFixedTag> DynamicBufferFixedTags => GasEntityManager.GetBuffer<BuffElemFixedTag>(_asc);
-        private DynamicBuffer<BuffElemTemporaryTag> DynamicBufferTemporaryTags => GasEntityManager.GetBuffer<BuffElemTemporaryTag>(_asc);
+        private DynamicBuffer<BFixedTag> DynamicBufferFixedTags => GasEntityManager.GetBuffer<BFixedTag>(_asc);
+        private DynamicBuffer<BTemporaryTag> DynamicBufferTemporaryTags => GasEntityManager.GetBuffer<BTemporaryTag>(_asc);
 
 #if UNITY_EDITOR
         public int[] FixedTags()
@@ -25,8 +25,8 @@ namespace GAS.RuntimeWithECS.Tag
         public GameplayTagController(Entity asc)
         {
             _asc = asc;
-            GasEntityManager.AddBuffer<BuffElemFixedTag>(_asc);
-            GasEntityManager.AddBuffer<BuffElemTemporaryTag>(_asc);
+            GasEntityManager.AddBuffer<BFixedTag>(_asc);
+            GasEntityManager.AddBuffer<BTemporaryTag>(_asc);
         }
 
         private bool HasFixedTag(int tag)
@@ -99,7 +99,7 @@ namespace GAS.RuntimeWithECS.Tag
         {
             if (HasFixedTag(tag)) return false;
             
-            DynamicBufferFixedTags.Add(new BuffElemFixedTag { tag = tag });
+            DynamicBufferFixedTags.Add(new BFixedTag { tag = tag });
             bool containTemporary = HasTemporaryTag(tag);
             // 从临时tag中剔除
             if (containTemporary) KillTemporaryTag(tag);

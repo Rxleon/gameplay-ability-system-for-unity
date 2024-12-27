@@ -12,7 +12,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
         AggregateByTarget //目标(Target)上只有一个堆栈实例而不管源(Source)如何, 每个源(Source)都可以在共享堆栈限制(Shared Stack Limit)内应用堆栈.
     }
     
-    public struct ComStacking : IComponentData
+    public struct CStacking : IComponentData
     {
         public EffectStackingType StackingType;
     }

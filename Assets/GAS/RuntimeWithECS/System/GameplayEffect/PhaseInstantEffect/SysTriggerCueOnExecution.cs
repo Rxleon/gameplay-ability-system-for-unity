@@ -16,7 +16,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             state.RequireForUpdate<CInApplicationProgress>();
             state.RequireForUpdate<CValidEffect>();
             state.RequireForUpdate<CInUsage>();
-            state.RequireForUpdate<ComCueOnExecution>();
+            state.RequireForUpdate<CCueOnExecution>();
         }
 
         //[BurstCompile]
@@ -41,7 +41,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         private readonly RefRO<CInUsage> _inUsage;
         private readonly RefRO<CValidEffect> _comValidEffect;
         private readonly RefRO<CInApplicationProgress> _inApplicationProgress;
-        private readonly RefRO<ComCueOnExecution> _cueOnExecution;
+        private readonly RefRO<CCueOnExecution> _cueOnExecution;
 
         public void Trigger(EntityManager entityManager)
         {

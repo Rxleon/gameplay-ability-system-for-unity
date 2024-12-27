@@ -15,7 +15,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComRemoveEffectWithTags>();
+            state.RequireForUpdate<CRemoveEffectWithTags>();
             state.RequireForUpdate<CInApplicationProgress>();
             state.RequireForUpdate<CValidEffect>();
             state.RequireForUpdate<CInUsage>();
@@ -27,7 +27,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
             foreach (var (removeEffectWithTags,inUsage,_,_) in 
-                     SystemAPI.Query<RefRO<ComRemoveEffectWithTags>,RefRO<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>>())
+                     SystemAPI.Query<RefRO<CRemoveEffectWithTags>,RefRO<CInUsage>,RefRO<CInApplicationProgress>,RefRO<CValidEffect>>())
             {
                 var tags = removeEffectWithTags.ValueRO.tags;
                 if (tags.Length == 0) continue;
@@ -41,9 +41,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                     if (!hasRemoveTag) continue;
                     geBuff.RemoveAt(i);
                     // 含有子实例的组件也要清理
-                    if (SystemAPI.HasComponent<ComPeriod>(ge))
+                    if (SystemAPI.HasComponent<CPeriod>(ge))
                     {
-                        var period = SystemAPI.GetComponentRO<ComPeriod>(ge);
+                        var period = SystemAPI.GetComponentRO<CPeriod>(ge);
                         foreach (var sonGe in period.ValueRO.GameplayEffects)
                             ecb.AddComponent<ComDestroy>(sonGe);
                     }

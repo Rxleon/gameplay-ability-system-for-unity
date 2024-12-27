@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComOngoingRequiredTags : IComponentData
+    public struct CImmunityTags : IComponentData
     {
         public NativeArray<int> tags;
     }

@@ -23,7 +23,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (_, ge) in SystemAPI
                          .Query<RefRW<CInUsage>>()
-                         .WithNone<ComDuration>()
+                         .WithNone<CDuration>()
                          .WithEntityAccess())
             {
                 ecb.AddComponent<ComDestroy>(ge);

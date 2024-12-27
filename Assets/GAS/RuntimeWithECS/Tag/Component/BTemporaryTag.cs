@@ -2,7 +2,7 @@
 
 namespace GAS.RuntimeWithECS.Tag.Component
 {
-    public struct BuffElemTemporaryTag: IBufferElementData
+    public struct BTemporaryTag: IBufferElementData
     {
         public int tag;
         public Entity source;

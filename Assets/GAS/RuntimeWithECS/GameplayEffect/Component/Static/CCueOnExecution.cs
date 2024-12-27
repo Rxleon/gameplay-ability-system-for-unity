@@ -6,7 +6,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.GameplayEffect.Component
 {
-    public struct ComCueOnExecution : IComponentData
+    public struct CCueOnExecution : IComponentData
     {
         public NativeArray<Entity> cues;
     }
@@ -25,7 +25,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
                 cues[i].SetSourceEntity(ge);
                 GASManager.EntityManager.SetComponentData(entities[i],new ComInstantCue(cues[i]));
             }
-            _entityManager.AddComponentData(ge, new ComCueOnExecution
+            _entityManager.AddComponentData(ge, new CCueOnExecution
             {
                 cues = new NativeArray<Entity>(entities, Allocator.Persistent)
             });
