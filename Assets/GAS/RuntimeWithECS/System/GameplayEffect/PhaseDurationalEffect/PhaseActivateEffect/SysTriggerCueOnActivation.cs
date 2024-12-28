@@ -5,6 +5,7 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
 {
     [UpdateInGroup(typeof(SysGroupDurationalEffect))]
+    [UpdateBefore(typeof(SysActivateEnd))]
     public partial struct SysTriggerCueOnActivation : ISystem
     {
         [BurstCompile]

@@ -157,6 +157,32 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             return false;
         }
 
+        public static bool CheckEffectHasAnyTags(this Entity gameplayEffect,  SingletonGameplayTagMap singletonGameplayTagMap ,EntityManager entityManager ,NativeArray<int> tags)
+        {
+            // 1.判断AssetTags
+            if (entityManager.HasComponent<CAssetTags>(gameplayEffect))
+            {
+                var assetTags = entityManager.GetComponentData<CAssetTags>(gameplayEffect).tags;
+
+                foreach (var assetTag in assetTags)
+                foreach (var tag in tags)
+                    if (singletonGameplayTagMap.IsTagAIncludeTagB(assetTag, tag))
+                        return true;
+            }
+
+            //2.判断GrantedTags
+            if (entityManager.HasComponent<CGrantedTags>(gameplayEffect))
+            {
+                var grantedTags = entityManager.GetComponentData<CGrantedTags>(gameplayEffect).tags;
+                foreach (var grantedTag in grantedTags)
+                foreach (var tag in tags)
+                    if (singletonGameplayTagMap.IsTagAIncludeTagB(grantedTag, tag))
+                        return true;
+            }
+
+            return false;
+        }
+        
         public static void EffectApply(this Entity gameplayEffect)
         {
             if (_entityManager.HasComponent<CValidEffect>(gameplayEffect)) return;

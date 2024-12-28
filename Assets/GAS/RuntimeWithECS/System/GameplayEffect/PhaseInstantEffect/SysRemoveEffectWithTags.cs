@@ -45,9 +45,9 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                     {
                         var period = SystemAPI.GetComponentRO<CPeriod>(ge);
                         foreach (var sonGe in period.ValueRO.GameplayEffects)
-                            ecb.AddComponent<ComDestroy>(sonGe);
+                            ecb.AddComponent<CDestroy>(sonGe);
                     }
-                    ecb.AddComponent<ComDestroy>(ge);
+                    ecb.AddComponent<CDestroy>(ge);
                 }
             }
             

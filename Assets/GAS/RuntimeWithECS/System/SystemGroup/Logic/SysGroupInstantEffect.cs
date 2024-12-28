@@ -4,7 +4,7 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.SystemGroup
 {
     
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(SysGroupLogic))]
     [UpdateAfter(typeof(SysGroupTryApplyEffect))]
     public partial class SysGroupInstantEffect : ComponentSystemGroup
     {

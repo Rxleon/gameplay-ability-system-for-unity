@@ -2,7 +2,7 @@
 
 namespace GAS.RuntimeWithECS.System.SystemGroup
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(SysGroupLogic))]
     public partial class SysGroupTryApplyEffect:ComponentSystemGroup
     {
     }

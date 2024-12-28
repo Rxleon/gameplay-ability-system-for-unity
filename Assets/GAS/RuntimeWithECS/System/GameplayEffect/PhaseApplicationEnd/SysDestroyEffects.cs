@@ -14,7 +14,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<ComDestroy>();
+            state.RequireForUpdate<CDestroy>();
         }
 
         [BurstCompile]
@@ -22,7 +22,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseApplicationEnd
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             
-            foreach (var (_,ge) in SystemAPI.Query<RefRO<ComDestroy>>().WithEntityAccess())
+            foreach (var (_,ge) in SystemAPI.Query<RefRO<CDestroy>>().WithEntityAccess())
             {
                 ecb.DestroyEntity(ge);
             }

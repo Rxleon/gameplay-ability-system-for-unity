@@ -28,6 +28,11 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             var currentTurn = globalFrameTimer.ValueRO.Turn;
             //  更新激活时间
             foreach (var (_, duration) in SystemAPI.Query<RefRO<CInActivationProgress>, RefRW<CDuration>>())
+            {
+                // 过滤已经激活的GE
+                if (duration.ValueRO.active) continue;
+                
+                duration.ValueRW.active = true;
                 if (duration.ValueRO.timeUnit == TimeUnit.Frame)
                 {
                     if (duration.ValueRO.activeTime == 0 || duration.ValueRO.ResetStartTimeWhenActivated)
@@ -41,7 +46,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                         duration.ValueRW.activeTime = currentTurn;
 
                     duration.ValueRW.lastActiveTime = currentTurn;
-                }
+                }}
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
