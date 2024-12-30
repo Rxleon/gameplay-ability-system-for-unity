@@ -96,7 +96,7 @@ namespace GAS.RuntimeWithECS.AbilitySystemCell
                 {
                     // BaseValue 改变，需要标记Dirty
                     attr.Dirty = true;
-                    GASManager.EntityManager.AddComponent<AttributeIsDirty>(asc);
+                    GASManager.EntityManager.AddComponent<CAttributeIsDirty>(asc);
                     GASEventCenter.InvokeOnBaseValueChangeAfter(asc, mod.AttrSetCode, mod.AttrCode, oldValue, newValue);
                 }
 

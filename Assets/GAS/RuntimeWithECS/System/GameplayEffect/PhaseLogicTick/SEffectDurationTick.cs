@@ -28,6 +28,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseLogicTick
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (duration, _, _, geEntity) in SystemAPI
                          .Query<RefRW<CDuration>, RefRO<CValidEffect>, RefRO<CInUsage>>()
+                         .WithNone<CStacking>()
                          .WithEntityAccess())
             {
                 // 过滤：

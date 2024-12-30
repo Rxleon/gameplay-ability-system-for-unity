@@ -3,6 +3,7 @@ using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.System.GameplayEffect.PhaseLogicTick;
 using GAS.RuntimeWithECS.System.SystemGroup.LogicTick;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.System.GameplayEffect
@@ -26,7 +27,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             var globalFrameTimer = SystemAPI.GetSingletonRW<GlobalTimer>();
             var currentFrame = globalFrameTimer.ValueRO.Frame;
             var currentTurn = globalFrameTimer.ValueRO.Turn;
-            
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (duration, inUsage, period,_, geEntity) in SystemAPI
                          .Query<RefRO<CDuration>, RefRO<CInUsage>, RefRW<CPeriod>,RefRO<CValidEffect>>()
                          .WithNone<CInApplicationProgress>()
@@ -45,12 +46,21 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                     {
                         // 实例化GE
                         var instanceGe = state.EntityManager.Instantiate(ge);
-                        
-                        // GasQueueCenter.AddEffectWaitingForApplication(instanceGe, inUsage.ValueRO.Target,
-                        //     inUsage.ValueRO.Target);
+                        ecb.AddComponent<CValidEffect>(instanceGe);
+                        ecb.AddComponent<CInApplicationProgress>(instanceGe);
+                        ecb.AddComponent<CInUsage>(instanceGe);
+                        ecb.SetComponent(instanceGe, new CInUsage()
+                        {
+                            Level = inUsage.ValueRO.Level,
+                            Target = inUsage.ValueRO.Target,
+                            Source = inUsage.ValueRO.Source,
+                        });
                     }
                 }
             }
+            
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
 
         [BurstCompile]

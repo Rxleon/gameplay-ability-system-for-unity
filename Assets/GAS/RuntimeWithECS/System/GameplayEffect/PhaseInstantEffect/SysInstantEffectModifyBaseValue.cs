@@ -32,7 +32,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
             foreach (var aspect in SystemAPI.Query<AspModifyBaseValue>())
             {
                 var change = aspect.ModifyBaseValue();
-                if (change) ecb.AddComponent<AttributeIsDirty>(aspect.ASC);
+                if (change) ecb.AddComponent<CAttributeIsDirty>(aspect.ASC);
             }
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
