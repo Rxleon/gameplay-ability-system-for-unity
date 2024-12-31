@@ -40,7 +40,11 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                         var oldValue = attr.CurrentValue;
                         var newValue = AttributeTool.RecalculateCurrentValue(asc, attrSet.Code, attr.Code);
                         attr.CurrentValue = newValue;
-
+                        
+                        attrSet.Attributes[i] = attr;
+                        var attributeSetBufferElements = attrSets;
+                        attributeSetBufferElements[index] = attrSet;
+                        
                         // OnChangeAfter
                         if (newValue != oldValue)
                             GASEventCenter.InvokeOnCurrentValueChangeAfter(asc, attrSet.Code, attr.Code, oldValue,
