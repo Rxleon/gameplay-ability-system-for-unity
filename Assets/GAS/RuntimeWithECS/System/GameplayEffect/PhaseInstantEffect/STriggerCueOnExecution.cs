@@ -7,8 +7,8 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupInstantEffect))]
-    [UpdateAfter(typeof(SysInstantEffectModifyBaseValue))]
-    public partial struct SysTriggerCueOnExecution : ISystem
+    [UpdateAfter(typeof(SInstantEffectModifyBaseValue))]
+    public partial struct STriggerCueOnExecution : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)

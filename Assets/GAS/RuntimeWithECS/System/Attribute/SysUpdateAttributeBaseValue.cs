@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GAS.RuntimeWithECS.System.Attribute
 {
-    [UpdateAfter(typeof(SysInstantEffectModifyBaseValue))]
+    [UpdateAfter(typeof(SInstantEffectModifyBaseValue))]
     public partial struct SysUpdateAttributeBaseValue : ISystem
     {
         [BurstCompile]

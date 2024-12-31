@@ -9,8 +9,8 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupInstantEffect))]
-    [UpdateAfter(typeof(SysInitEffect))]
-    public partial struct SysRemoveEffectWithTags : ISystem
+    [UpdateAfter(typeof(SInitEffect))]
+    public partial struct SRemoveEffectWithTags : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -59,32 +59,5 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         {
 
         }
-        
-        // public static void RemoveGameplayEffectWithAnyTags(this Entity asc, Entity gameplayEffect)
-        // {
-        //     if (!_entityManager.HasComponent<ComRemoveEffectWithTags>(gameplayEffect)) return;
-        //
-        //     var comRemoveEffectWithTags = _entityManager.GetComponentData<ComRemoveEffectWithTags>(gameplayEffect);
-        //     var removeEffectWithTags = comRemoveEffectWithTags.tags;
-        //     if (removeEffectWithTags.Length == 0) return;
-        //
-        //     var geBuff = _entityManager.GetBuffer<GameplayEffectBufferElement>(asc);
-        //     for (var i = geBuff.Length - 1; i >= 0; i--)
-        //     {
-        //         var ge = geBuff[i].GameplayEffect;
-        //         var hasRemoveTag = ge.CheckEffectHasAnyTags(removeEffectWithTags);
-        //         if (!hasRemoveTag) continue;
-        //         geBuff.RemoveAt(i);
-        //         // 含有子实例的组件也要清理
-        //         if (_entityManager.HasComponent<ComPeriod>(ge))
-        //         {
-        //             var period = _entityManager.GetComponentData<ComPeriod>(ge);
-        //             foreach (var sonGe in period.GameplayEffects)
-        //                 _entityManager.DestroyEntity(sonGe);
-        //         }
-        //
-        //         _entityManager.DestroyEntity(ge);
-        //     }
-        // }
     }
 }

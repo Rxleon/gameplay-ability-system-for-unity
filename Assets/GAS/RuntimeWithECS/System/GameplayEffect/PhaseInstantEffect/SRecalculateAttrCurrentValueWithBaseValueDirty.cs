@@ -3,13 +3,14 @@ using GAS.RuntimeWithECS.AttributeSet.Component;
 using GAS.RuntimeWithECS.Core;
 using GAS.RuntimeWithECS.System.SystemGroup;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupInstantEffect))]
-    [UpdateAfter(typeof(SysInstantEffectModifyBaseValue))]
-    [UpdateBefore(typeof(SysInstantEffectOver))]
+    [UpdateAfter(typeof(SInstantEffectModifyBaseValue))]
+    [UpdateBefore(typeof(SInstantEffectOver))]
     public partial struct SRecalculateAttrCurrentValueWithBaseValueDirty : ISystem
     {
         [BurstCompile]
@@ -21,9 +22,11 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
         //[BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (_, attrSets, asc) in SystemAPI
                          .Query<RefRO<CAttributeIsDirty>, DynamicBuffer<AttributeSetBufferElement>>()
                          .WithEntityAccess())
+            {
                 for (var index = 0; index < attrSets.Length; index++)
                 {
                     var attrSet = attrSets[index];
@@ -44,6 +47,12 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
                                 newValue);
                     }
                 }
+
+                ecb.RemoveComponent<CAttributeIsDirty>(asc);
+            }
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
 
         [BurstCompile]

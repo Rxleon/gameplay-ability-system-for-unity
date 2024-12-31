@@ -11,7 +11,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect
     /// </summary>
     
     [UpdateInGroup(typeof(SysGroupInstantEffect))]
-    public partial struct SysInitEffect : ISystem
+    public partial struct SInitEffect : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)

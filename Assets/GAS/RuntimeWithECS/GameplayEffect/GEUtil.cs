@@ -50,8 +50,8 @@ namespace GAS.RuntimeWithECS.GameplayEffect
             comInUsage.Target = target;
             _entityManager.SetComponentData(gameplayEffect, comInUsage);
             
-            var geBuffers = GameplayEffectUtils.GameplayEffectsOf(target);
-            geBuffers.Add(new BuffEleGameplayEffect { GameplayEffect = gameplayEffect });
+            // var geBuffers = GameplayEffectUtils.GameplayEffectsOf(target);
+            // geBuffers.Add(new BuffEleGameplayEffect { GameplayEffect = gameplayEffect });
         }
 
         /// <summary>

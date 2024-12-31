@@ -14,8 +14,8 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupInstantEffect))]
-    [UpdateAfter(typeof(SysRemoveEffectWithTags))]
-    public partial struct SysInstantEffectModifyBaseValue : ISystem
+    [UpdateAfter(typeof(SRemoveEffectWithTags))]
+    public partial struct SInstantEffectModifyBaseValue : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)

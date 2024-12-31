@@ -72,7 +72,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
                 return Operation_AddNewGameplayEffect(gameplayEffect,source,target ,level);
             
             
-            var stacking = _entityManager.GetComponentData<CStacking>(gameplayEffect);
+            //var stacking = _entityManager.GetComponentData<CStacking>(gameplayEffect);
             // TODO
             // 处理GE堆叠
             // 基于Target类型GE堆叠
