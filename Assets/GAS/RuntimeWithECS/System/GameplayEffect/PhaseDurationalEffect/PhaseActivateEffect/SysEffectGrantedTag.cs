@@ -7,7 +7,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
 {
-    [UpdateInGroup(typeof(SysGroupDurationalEffect))]
+    [UpdateInGroup(typeof(SysGroupActivateEffect))]
     [UpdateBefore(typeof(SysActivateEnd))]
     public partial struct SysEffectGrantedTag : ISystem
     {

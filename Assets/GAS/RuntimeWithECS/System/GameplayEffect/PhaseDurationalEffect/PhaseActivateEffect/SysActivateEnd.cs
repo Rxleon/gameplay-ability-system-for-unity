@@ -6,7 +6,7 @@ using Unity.Entities;
 
 namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
 {
-    [UpdateInGroup(typeof(SysGroupDurationalEffect))]
+    [UpdateInGroup(typeof(SysGroupActivateEffect))]
     public partial struct SysActivateEnd : ISystem
     {
         [BurstCompile]
