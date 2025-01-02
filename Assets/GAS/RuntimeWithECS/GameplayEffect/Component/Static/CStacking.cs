@@ -61,5 +61,9 @@ namespace GAS.RuntimeWithECS.GameplayEffect.Component
         public bool denyOverflowApplication; //对应于StackDurationRefreshPolicy，如果为True则多余的Apply不会刷新Duration
         public bool clearStackOnOverflow; //当DenyOverflowApplication为True是才有效，当Overflow时是否直接删除所有层数
         public NativeArray<Entity> overflowEffects; // 超过StackLimitCount数量的Effect被Apply时将会调用该Over
+        
+        
+        // -------------------------------------以下是RUNTIME数据，不需要初始化---------------------------------------//
+        public int StackCount;
     }
 }

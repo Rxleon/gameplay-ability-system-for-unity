@@ -1,4 +1,7 @@
+using System;
+using GAS.Runtime;
 using GAS.RuntimeWithECS.Common.Component;
+using GAS.RuntimeWithECS.Core;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.System.SystemGroup;
 using Unity.Burst;
@@ -13,16 +16,18 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<GlobalTimer>();
             state.RequireForUpdate<CInApplicationProgress>();
             state.RequireForUpdate<CStacking>();
+            state.RequireForUpdate<CDuration>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
-            foreach (var (inUsage, _, stacking, ge) in SystemAPI
-                         .Query<RefRO<CInUsage>, RefRO<CInActivationProgress>, RefRO<CStacking>>()
+            foreach (var (inUsage, _, stacking,duration, ge) in SystemAPI
+                         .Query<RefRO<CInUsage>, RefRO<CInActivationProgress>, RefRO<CStacking>,RefRW<CDuration>>()
                          .WithEntityAccess())
             {
                 // 判断是否是新添加的GE
@@ -38,12 +43,12 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     ecb.AddComponent<CDestroy>(ge);
 
                     // 2.尝试更新Stack层数，触发OnStackCountChanged事件
-                    var stackCountChanged =
-                        TryChangeStackCount(state.EntityManager, stackingGe, 0); // stacking.ValueRO.StackCount);
+                    var changed = TryChangeStackCount(state.EntityManager, stackingGe, 0); // stacking.ValueRO.StackCount);
 
                     // 3.如果层数改变，额外触发OnGameplayEffectContainerIsDirty
-                    if (stackCountChanged)
+                    if (changed)
                     {
+                        
                     }
                 }
             }
@@ -88,15 +93,59 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             return Entity.Null;
         }
 
-        private bool TryChangeStackCount(EntityManager entityManager, Entity ge, int stackCount)
+        private bool TryChangeStackCount(EntityManager entityManager, Entity ge,CStacking stacking, int stackCount,RefRW<CDuration> duration,GlobalTimer globalFrameTimer)
         {
-            // var stackCountComp = entityManager.GetComponentData<CStackCount>(ge);
-            // if (stackCountComp.StackCount != stackCount)
-            // {
-            //     stackCountComp.StackCount = stackCount;
-            //     entityManager.SetComponentData(ge, stackCountComp);
-            // }
-            return true;
+            // 获取旧Stacking数据
+            var oldStackCount = entityManager.GetComponentData<CStacking>(ge).StackCount;
+            int newStackCount = stackCount;
+            if (stackCount <= stacking.LimitCount)
+            {
+                // 更新栈数
+                newStackCount = Math.Max(1,stackCount); // 最小层数为1
+                // 是否刷新Duration
+                if (stacking.EffectDurationRefreshPolicy == EffectDurationRefreshPolicy.RefreshOnSuccessfulApplication)
+                {
+                    RefreshDuration(duration,globalFrameTimer);
+                }
+                // 是否重置Period
+                if (stacking.EffectPeriodResetPolicy == EffectPeriodResetPolicy.ResetOnSuccessfulApplication)
+                {
+                    bool hasPeriodTicker = entityManager.HasComponent<CPeriod>(ge);
+                    if(hasPeriodTicker)
+                        PeriodTicker.ResetPeriod();
+                }
+            }
+            else
+            {
+                // 溢出GE生效
+                foreach (var overflowEffect in stacking.overflowEffects)
+                    Owner.ApplyGameplayEffectToSelf(overflowEffect);
+
+                if (stacking.EffectDurationRefreshPolicy == EffectDurationRefreshPolicy.RefreshOnSuccessfulApplication)
+                {
+                    if (stacking.denyOverflowApplication)
+                    {
+                        //当DenyOverflowApplication为True是才有效，当Overflow时是否直接删除所有层数
+                        if (stacking.clearStackOnOverflow)
+                        {
+                            RemoveSelf();
+                        }
+                    }
+                    else
+                    {
+                        RefreshDuration();
+                    }
+                }
+            }
+            
+            RefreshStack(StackCount + 1);
+            OnStackCountChange(oldStackCount, newStackCount);
+            return oldStackCount != newStackCount;
+        }
+        
+        private void RefreshDuration(RefRW<CDuration> duration,GlobalTimer globalFrameTimer)
+        {
+            SActivateEffect.UpdateActiveTime(ref duration.ValueRW,globalFrameTimer);
         }
     }
 }
