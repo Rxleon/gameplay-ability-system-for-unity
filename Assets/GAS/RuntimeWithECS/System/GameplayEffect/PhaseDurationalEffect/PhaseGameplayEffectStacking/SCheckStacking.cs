@@ -43,13 +43,14 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     ecb.AddComponent<CDestroy>(ge);
 
                     // 2.尝试更新Stack层数，触发OnStackCountChanged事件
-                    var changed = TryChangeStackCount(state.EntityManager, stackingGe, 0); // stacking.ValueRO.StackCount);
+                    // TODO
+                    // var changed = TryChangeStackCount(state.EntityManager, stackingGe, 0); // stacking.ValueRO.StackCount);
 
                     // 3.如果层数改变，额外触发OnGameplayEffectContainerIsDirty
-                    if (changed)
-                    {
-                        
-                    }
+                    // if (changed)
+                    // {
+                    //     
+                    // }
                 }
             }
 
@@ -111,15 +112,18 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                 if (stacking.EffectPeriodResetPolicy == EffectPeriodResetPolicy.ResetOnSuccessfulApplication)
                 {
                     bool hasPeriodTicker = entityManager.HasComponent<CPeriod>(ge);
-                    if(hasPeriodTicker)
-                        PeriodTicker.ResetPeriod();
+                    if (hasPeriodTicker)
+                    {
+                        // TODO 重置Period
+                        // PeriodTicker.ResetPeriod();
+                    }
                 }
             }
             else
             {
-                // 溢出GE生效
-                foreach (var overflowEffect in stacking.overflowEffects)
-                    Owner.ApplyGameplayEffectToSelf(overflowEffect);
+                // TODO 溢出GE生效
+                // foreach (var overflowEffect in stacking.overflowEffects)
+                //     Owner.ApplyGameplayEffectToSelf(overflowEffect);
 
                 if (stacking.EffectDurationRefreshPolicy == EffectDurationRefreshPolicy.RefreshOnSuccessfulApplication)
                 {
@@ -128,18 +132,22 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                         //当DenyOverflowApplication为True是才有效，当Overflow时是否直接删除所有层数
                         if (stacking.clearStackOnOverflow)
                         {
-                            RemoveSelf();
+                            // 移除自身
+                            entityManager.RemoveComponent<CValidEffect>(ge);
+                            entityManager.AddComponent<CDestroy>(ge);
                         }
                     }
                     else
                     {
-                        RefreshDuration();
+                        // 刷新Duration
+                        RefreshDuration(duration,globalFrameTimer);
                     }
                 }
             }
-            
-            RefreshStack(StackCount + 1);
-            OnStackCountChange(oldStackCount, newStackCount);
+           
+            // TODO
+            // RefreshStack(StackCount + 1);
+            // OnStackCountChange(oldStackCount, newStackCount);
             return oldStackCount != newStackCount;
         }
         
