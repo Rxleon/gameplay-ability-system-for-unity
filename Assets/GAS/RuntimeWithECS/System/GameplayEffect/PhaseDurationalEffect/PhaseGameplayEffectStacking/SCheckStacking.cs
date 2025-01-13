@@ -45,18 +45,13 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     ecb.AddComponent<CDestroy>(ge);
 
                     // 2.尝试更新Stack层数，触发OnStackCountChanged事件
-                    var changed = TryChangeStackCount(
+                    // 3.如果层数改变，额外触发OnGameplayEffectContainerIsDirty
+                    TryChangeStackCount(
                         state.EntityManager, 
                         stackingGe, stacking.ValueRO,
                         stacking.ValueRO.StackCount+1,
                         duration,
                         globalFrameTimer);
-
-                    // 3.如果层数改变，额外触发OnGameplayEffectContainerIsDirty
-                    if (changed)
-                    {
-                        GASEventCenter.InvokeOnGameplayEffectContainerIsDirty(inUsage.ValueRO.Target);
-                    }
                 }
             }
 
@@ -100,7 +95,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             return Entity.Null;
         }
 
-        private bool TryChangeStackCount(EntityManager entityManager, Entity ge,CStacking stacking, int stackCount,RefRW<CDuration> duration,GlobalTimer globalFrameTimer)
+        public static void TryChangeStackCount(EntityManager entityManager, Entity ge,CStacking stacking, int stackCount,RefRW<CDuration> duration,GlobalTimer globalFrameTimer)
         {
             // 获取旧Stacking数据
             var oldStackCount = entityManager.GetComponentData<CStacking>(ge).StackCount;
@@ -112,7 +107,7 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                 // 是否刷新Duration
                 if (stacking.EffectDurationRefreshPolicy == EffectDurationRefreshPolicy.RefreshOnSuccessfulApplication)
                 {
-                    RefreshDuration(duration,globalFrameTimer);
+                    SActivateEffect.UpdateActiveTime(ref duration.ValueRW,globalFrameTimer);
                 }
                 // 是否重置Period
                 if (stacking.EffectPeriodResetPolicy == EffectPeriodResetPolicy.ResetOnSuccessfulApplication)
@@ -157,19 +152,19 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     else
                     {
                         // 刷新Duration
-                        RefreshDuration(duration,globalFrameTimer);
+                        SActivateEffect.UpdateActiveTime(ref duration.ValueRW,globalFrameTimer);
                     }
                 }
             }
            
             // StackCount尝试改变，事件
             GASEventCenter.InvokeOnTryChangeGameplayEffectStackCount(ge,oldStackCount, newStackCount);
-            return oldStackCount != newStackCount;
-        }
-        
-        private void RefreshDuration(RefRW<CDuration> duration,GlobalTimer globalFrameTimer)
-        {
-            SActivateEffect.UpdateActiveTime(ref duration.ValueRW,globalFrameTimer);
+            
+            if (oldStackCount != newStackCount)
+            {
+                var inUsage = entityManager.GetComponentData<CInUsage>(ge);
+                GASEventCenter.InvokeOnGameplayEffectContainerIsDirty(inUsage.Target);
+            }
         }
     }
 }

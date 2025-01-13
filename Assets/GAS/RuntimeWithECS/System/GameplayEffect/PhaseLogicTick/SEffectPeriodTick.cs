@@ -9,12 +9,12 @@ using Unity.Entities;
 namespace GAS.RuntimeWithECS.System.GameplayEffect
 {
     [UpdateInGroup(typeof(SysGroupTickGameplayEffect))]
-    [UpdateBefore(typeof(SEffectDurationTick))]
-    public partial struct SEffectPeriodTicker : ISystem
+    public partial struct SEffectPeriodTick : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<GlobalTimer>();
             state.RequireForUpdate<CPeriod>();
             state.RequireForUpdate<CValidEffect>();
             state.RequireForUpdate<CDuration>();
