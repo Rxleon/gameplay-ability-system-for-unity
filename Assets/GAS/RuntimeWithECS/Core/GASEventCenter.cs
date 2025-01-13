@@ -132,7 +132,7 @@ namespace GAS.RuntimeWithECS.Core
 
         #endregion
 
-        #region GameplayEffect 事件
+        #region GameplayEffectContainerIsDirty 事件
 
         private static readonly Dictionary<Entity, Action> _onGameplayEffectContainerIsDirty = new();
 
@@ -157,6 +157,36 @@ namespace GAS.RuntimeWithECS.Core
         {
             if (_onGameplayEffectContainerIsDirty.TryGetValue(entity, out var action))
                 action?.Invoke();
+        }
+
+        #endregion
+
+        #region TryChangeGameplayEffectStackCount 事件
+
+        private static readonly Dictionary<Entity, Action<int, int>> _onTryChangeGameplayEffectStackCount = new();
+
+        public static void RegisterOnTryChangeGameplayEffectStackCount(Entity entity, Action<int, int> action)
+        {
+            if (!_onTryChangeGameplayEffectStackCount.TryAdd(entity, action))
+                _onTryChangeGameplayEffectStackCount[entity] =
+                    (Action<int, int>)Delegate.Combine(_onTryChangeGameplayEffectStackCount[entity], action);
+        }
+
+        public static void UnRegisterOnTryChangeGameplayEffectStackCount(Entity entity, Action<int, int> action)
+        {
+            if (!_onTryChangeGameplayEffectStackCount.TryGetValue(entity, out var existingAction)) return;
+            var newAction = (Action<int, int>)Delegate.Remove(existingAction, action);
+            if (newAction == null)
+                _onTryChangeGameplayEffectStackCount.Remove(entity);
+            else
+                _onTryChangeGameplayEffectStackCount[entity] = newAction;
+        }
+
+        public static void InvokeOnTryChangeGameplayEffectStackCount(Entity entity, int oldStackCount,
+            int newStackCount)
+        {
+            if (_onTryChangeGameplayEffectStackCount.TryGetValue(entity, out var action))
+                action?.Invoke(oldStackCount, newStackCount);
         }
 
         #endregion

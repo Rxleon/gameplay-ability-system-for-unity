@@ -15,6 +15,7 @@ namespace GAS.RuntimeWithECS.GameplayEffect
     {
         private static EntityManager _entityManager => GASManager.EntityManager;
 
+        // TODO
         /// <summary>
         /// 立即应用GameplayEffect
         /// 所有派生的GameplayEffect，以及自定义逻辑中，都使用该接口来实现GameplayEffect的应用

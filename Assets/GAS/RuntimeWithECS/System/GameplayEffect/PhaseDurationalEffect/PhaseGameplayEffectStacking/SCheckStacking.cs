@@ -2,6 +2,7 @@ using System;
 using GAS.Runtime;
 using GAS.RuntimeWithECS.Common.Component;
 using GAS.RuntimeWithECS.Core;
+using GAS.RuntimeWithECS.GameplayEffect;
 using GAS.RuntimeWithECS.GameplayEffect.Component;
 using GAS.RuntimeWithECS.System.SystemGroup;
 using Unity.Burst;
@@ -22,10 +23,11 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
             state.RequireForUpdate<CDuration>();
         }
 
-        [BurstCompile]
+        //[BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
+            var globalFrameTimer = SystemAPI.GetSingletonRW<GlobalTimer>().ValueRO;
             foreach (var (inUsage, _, stacking,duration, ge) in SystemAPI
                          .Query<RefRO<CInUsage>, RefRO<CInActivationProgress>, RefRO<CStacking>,RefRW<CDuration>>()
                          .WithEntityAccess())
@@ -43,14 +45,18 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     ecb.AddComponent<CDestroy>(ge);
 
                     // 2.尝试更新Stack层数，触发OnStackCountChanged事件
-                    // TODO
-                    // var changed = TryChangeStackCount(state.EntityManager, stackingGe, 0); // stacking.ValueRO.StackCount);
+                    var changed = TryChangeStackCount(
+                        state.EntityManager, 
+                        stackingGe, stacking.ValueRO,
+                        stacking.ValueRO.StackCount+1,
+                        duration,
+                        globalFrameTimer);
 
                     // 3.如果层数改变，额外触发OnGameplayEffectContainerIsDirty
-                    // if (changed)
-                    // {
-                    //     
-                    // }
+                    if (changed)
+                    {
+                        GASEventCenter.InvokeOnGameplayEffectContainerIsDirty(inUsage.ValueRO.Target);
+                    }
                 }
             }
 
@@ -114,16 +120,27 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                     bool hasPeriodTicker = entityManager.HasComponent<CPeriod>(ge);
                     if (hasPeriodTicker)
                     {
-                        // TODO 重置Period
-                        // PeriodTicker.ResetPeriod();
+                        // 重置Period
+                        var period = entityManager.GetComponentData<CPeriod>(ge);
+                        var currentFrame = globalFrameTimer.Frame;
+                        var currentTurn = globalFrameTimer.Turn;
+                        var time = duration.ValueRO.timeUnit == TimeUnit.Frame ? currentFrame : currentTurn;
+                        period.StartTime = time;
+                        entityManager.SetComponentData(ge,period);
                     }
                 }
             }
             else
             {
-                // TODO 溢出GE生效
-                // foreach (var overflowEffect in stacking.overflowEffects)
-                //     Owner.ApplyGameplayEffectToSelf(overflowEffect);
+                // 溢出GE生效
+                if (stacking.overflowEffects.Length > 0)
+                {
+                    var inUsage = entityManager.GetComponentData<CInUsage>(ge);
+                    var target = inUsage.Target;
+                    var source = inUsage.Source;
+                    foreach (var overflowEffect in stacking.overflowEffects)
+                        GEUtil.ApplyGameplayEffectImmediate(overflowEffect, target, source);
+                }
 
                 if (stacking.EffectDurationRefreshPolicy == EffectDurationRefreshPolicy.RefreshOnSuccessfulApplication)
                 {
@@ -145,9 +162,8 @@ namespace GAS.RuntimeWithECS.System.GameplayEffect.PhaseDurationalEffect
                 }
             }
            
-            // TODO
-            // RefreshStack(StackCount + 1);
-            // OnStackCountChange(oldStackCount, newStackCount);
+            // StackCount尝试改变，事件
+            GASEventCenter.InvokeOnTryChangeGameplayEffectStackCount(ge,oldStackCount, newStackCount);
             return oldStackCount != newStackCount;
         }
         
